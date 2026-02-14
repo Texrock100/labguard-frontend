@@ -8,7 +8,7 @@ function fmt(num) {
 function pct(num) {
   if (num == null) return "";
   const sign = num > 0 ? "+" : "";
-  return sign + num.toFixed(1) + "%";
+  return sign + Math.round(num) + "%";
 }
 
 export default function ResultsScreen({ results, onReset }) {
