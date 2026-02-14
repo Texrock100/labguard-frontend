@@ -8,17 +8,32 @@ import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://web-production-c5039.up.railway.app";
 
-// Invite codes moved into AccessGate component
-
 function App() {
   const [screen, setScreen] = useState("capture");
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [state, setState] = useState("TX");
   const [hasAccess, setHasAccess] = useState(false);
+  const [scansRemaining, setScansRemaining] = useState(null);
 
   const handleAccessGranted = () => {
     setHasAccess(true);
+    // Fetch initial usage
+    const token = localStorage.getItem("gs_token");
+    if (token) {
+      fetch(`${API_URL}/auth/usage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.scans_remaining !== undefined) {
+            setScansRemaining(data.is_paid ? -1 : data.scans_remaining);
+          }
+        })
+        .catch(() => {});
+    }
   };
 
   const handleSubmit = async (imageFile) => {
@@ -28,14 +43,23 @@ function App() {
     const formData = new FormData();
     formData.append("file", imageFile);
 
+    // Include token in the request for usage tracking
+    const token = localStorage.getItem("gs_token") || "";
+    const tokenParam = token ? `&token=${encodeURIComponent(token)}` : "";
+
     try {
-      const resp = await fetch(`${API_URL}/analyze?state=${state}`, {
+      const resp = await fetch(`${API_URL}/analyze?state=${state}${tokenParam}`, {
         method: "POST",
         body: formData,
       });
 
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
+        if (resp.status === 403) {
+          setError("limit_reached");
+          setScreen("error");
+          return;
+        }
         throw new Error(errData.detail || `Server error: ${resp.status}`);
       }
 
@@ -43,6 +67,11 @@ function App() {
 
       if (!data.success) {
         throw new Error(data.error || "Analysis failed. Please try again.");
+      }
+
+      // Update remaining scans
+      if (scansRemaining !== null && scansRemaining > 0) {
+        setScansRemaining(scansRemaining - 1);
       }
 
       setResults(data);
@@ -78,18 +107,32 @@ function App() {
 
       <main className="app-main">
         {screen === "capture" && (
-          <CaptureScreen
-            onSubmit={handleSubmit}
-            state={state}
-            onStateChange={setState}
-          />
+          <>
+            {scansRemaining !== null && scansRemaining >= 0 && (
+              <div className="scans-remaining">
+                {scansRemaining > 0
+                  ? `${scansRemaining} free scan${scansRemaining === 1 ? "" : "s"} remaining`
+                  : "No free scans remaining"}
+              </div>
+            )}
+            <CaptureScreen
+              onSubmit={handleSubmit}
+              state={state}
+              onStateChange={setState}
+            />
+          </>
         )}
         {screen === "loading" && <LoadingScreen />}
         {screen === "results" && (
           <ResultsScreen results={results} onReset={handleReset} />
         )}
         {screen === "error" && (
-          <ErrorScreen error={error} onRetry={handleReset} />
+          <ErrorScreen
+            error={error === "limit_reached"
+              ? "You've used all 3 free scans. Subscription coming soon — contact info@gougestop.com for more access."
+              : error}
+            onRetry={handleReset}
+          />
         )}
       </main>
 

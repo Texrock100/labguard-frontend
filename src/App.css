@@ -85,6 +85,18 @@ body {
   border-top: 1px solid var(--gray-200);
 }
 
+/* ===== SCANS REMAINING ===== */
+.scans-remaining {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  background: #d1ecf1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
 /* ===== CAPTURE SCREEN ===== */
 .capture-screen {
   display: flex;
