@@ -52,7 +52,7 @@ export default function AccessGate({ validCodes, onAccessGranted }) {
           </div>
           <p className="gate-contact">
             Want access? Contact us at{" "}
-            <a href="mailto:david@avantcapitalpartners.com">david@avantcapitalpartners.com</a>
+            <a href="mailto:info@gougestop.com">info@gougestop.com</a>
           </p>
         </div>
       </main>
