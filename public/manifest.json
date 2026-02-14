@@ -1,6 +1,6 @@
 {
   "name": "Labguard - Medicare Lab Cost Comparison",
-  "short_name": "Labguard",
+  "short_name": "GougeStop",
   "description": "Know what Medicare pays. Stop overpaying for lab tests",
   "start_url": "/",
   "display": "standalone",
