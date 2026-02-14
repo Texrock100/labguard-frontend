@@ -18,8 +18,8 @@ export default function AccessGate({ validCodes, onAccessGranted }) {
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-title">
-            <span className="title-blood">Lab</span>
-            <span className="title-war">Guard</span>
+            <span className="title-blood">Gouge</span>
+            <span className="title-war">Stop</span>
           </h1>
           <p className="app-tagline">Know what Medicare pays. Stop overpaying.</p>
         </div>
