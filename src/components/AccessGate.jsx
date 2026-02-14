@@ -30,7 +30,7 @@ export default function AccessGate({ validCodes, onAccessGranted }) {
           <div className="gate-card">
             <div className="gate-icon">&#x1F512;</div>
             <h2>Beta Access</h2>
-            <p>LabGuard is currently in private beta. Enter your invite code to continue.</p>
+            <p>GougeStop is currently in private beta. Enter your invite code to continue.</p>
             <form onSubmit={handleSubmit}>
               <input
                 type="text"

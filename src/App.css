@@ -718,6 +718,120 @@ body {
   text-decoration: none;
 }
 
+/* ===== HOW IT WORKS (in-app) ===== */
+.how-it-works {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.hiw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.hiw-header h2 {
+  font-size: 20px;
+  color: var(--navy);
+  flex: 1;
+}
+
+.hiw-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--gray-500);
+  cursor: pointer;
+  padding: 0 0 0 12px;
+  line-height: 1;
+}
+
+.hiw-intro {
+  font-size: 15px;
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.hiw-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.hiw-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.hiw-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hiw-step strong {
+  display: block;
+  font-size: 15px;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+
+.hiw-step p {
+  font-size: 14px;
+  color: var(--gray-500);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.hiw-privacy {
+  background: var(--green-bg);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.hiw-privacy strong {
+  display: block;
+  font-size: 14px;
+  color: #155724;
+  margin-bottom: 4px;
+}
+
+.hiw-privacy p {
+  font-size: 13px;
+  color: #155724;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.hiw-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.hiw-link:hover {
+  color: #fff;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 400px) {
   .app-main { padding: 10px; }
