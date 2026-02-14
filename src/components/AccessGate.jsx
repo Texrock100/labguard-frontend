@@ -58,7 +58,7 @@ export default function AccessGate({ validCodes, onAccessGranted }) {
       </main>
 
       <footer className="app-footer">
-        <p>LabGuard is for informational purposes only. Not medical or financial advice.</p>
+        <p>GougeStop is for informational purposes only. Not medical or financial advice.</p>
       </footer>
     </div>
   );
