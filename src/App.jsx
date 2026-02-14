@@ -8,8 +8,7 @@ import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://web-production-c5039.up.railway.app";
 
-// Valid invite codes - add more as needed
-const VALID_CODES = ["GOUGESTOP2026", "BETAUSER", "BADGER"];
+// Invite codes moved into AccessGate component
 
 function App() {
   const [screen, setScreen] = useState("capture");
@@ -62,7 +61,7 @@ function App() {
 
   // Show access gate if not authenticated
   if (!hasAccess) {
-    return <AccessGate validCodes={VALID_CODES} onAccessGranted={handleAccessGranted} />;
+    return <AccessGate onAccessGranted={handleAccessGranted} />;
   }
 
   return (
