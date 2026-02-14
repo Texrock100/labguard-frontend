@@ -97,6 +97,84 @@ body {
   margin-bottom: 12px;
 }
 
+/* ===== PAYWALL SCREEN ===== */
+.paywall-screen {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.paywall-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.paywall-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.paywall-card h2 {
+  font-size: 22px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.paywall-card > p {
+  font-size: 14px;
+  color: var(--gray-500);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.paywall-price {
+  margin-bottom: 20px;
+}
+
+.paywall-amount {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.paywall-period {
+  font-size: 16px;
+  color: var(--gray-500);
+  margin-left: 4px;
+}
+
+.paywall-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.paywall-features li {
+  font-size: 15px;
+  color: var(--gray-700);
+  padding: 6px 0;
+  padding-left: 28px;
+  position: relative;
+}
+
+.paywall-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.paywall-btn {
+  margin-bottom: 12px;
+}
+
 /* ===== CAPTURE SCREEN ===== */
 .capture-screen {
   display: flex;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CaptureScreen from "./components/CaptureScreen";
 import ResultsScreen from "./components/ResultsScreen";
 import LoadingScreen from "./components/LoadingScreen";
@@ -15,10 +15,22 @@ function App() {
   const [state, setState] = useState("TX");
   const [hasAccess, setHasAccess] = useState(false);
   const [scansRemaining, setScansRemaining] = useState(null);
+  const [isPaid, setIsPaid] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Check for payment success in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success") {
+      setIsPaid(true);
+      setScansRemaining(-1);
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   const handleAccessGranted = () => {
     setHasAccess(true);
-    // Fetch initial usage
     const token = localStorage.getItem("gs_token");
     if (token) {
       fetch(`${API_URL}/auth/usage`, {
@@ -30,9 +42,37 @@ function App() {
         .then((data) => {
           if (data.scans_remaining !== undefined) {
             setScansRemaining(data.is_paid ? -1 : data.scans_remaining);
+            setIsPaid(data.is_paid);
           }
         })
         .catch(() => {});
+    }
+  };
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true);
+    const token = localStorage.getItem("gs_token");
+    if (!token) {
+      setCheckoutLoading(false);
+      return;
+    }
+
+    try {
+      const resp = await fetch(`${API_URL}/stripe/create-checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await resp.json();
+
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        setCheckoutLoading(false);
+      }
+    } catch {
+      setCheckoutLoading(false);
     }
   };
 
@@ -43,7 +83,6 @@ function App() {
     const formData = new FormData();
     formData.append("file", imageFile);
 
-    // Include token in the request for usage tracking
     const token = localStorage.getItem("gs_token") || "";
     const tokenParam = token ? `&token=${encodeURIComponent(token)}` : "";
 
@@ -56,8 +95,7 @@ function App() {
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
         if (resp.status === 403) {
-          setError("limit_reached");
-          setScreen("error");
+          setScreen("paywall");
           return;
         }
         throw new Error(errData.detail || `Server error: ${resp.status}`);
@@ -69,7 +107,6 @@ function App() {
         throw new Error(data.error || "Analysis failed. Please try again.");
       }
 
-      // Update remaining scans
       if (scansRemaining !== null && scansRemaining > 0) {
         setScansRemaining(scansRemaining - 1);
       }
@@ -88,7 +125,6 @@ function App() {
     setScreen("capture");
   };
 
-  // Show access gate if not authenticated
   if (!hasAccess) {
     return <AccessGate onAccessGranted={handleAccessGranted} />;
   }
@@ -126,13 +162,37 @@ function App() {
         {screen === "results" && (
           <ResultsScreen results={results} onReset={handleReset} />
         )}
+        {screen === "paywall" && (
+          <div className="paywall-screen">
+            <div className="paywall-card">
+              <div className="paywall-icon">&#x1F513;</div>
+              <h2>Unlock Unlimited Scans</h2>
+              <p>You've used your 3 free scans. Upgrade to keep using GougeStop and save on every lab bill.</p>
+              <div className="paywall-price">
+                <span className="paywall-amount">$4.99</span>
+                <span className="paywall-period">one-time</span>
+              </div>
+              <ul className="paywall-features">
+                <li>Unlimited bill and order scans</li>
+                <li>Compare prices at nearby labs</li>
+                <li>See Medicare rates for every test</li>
+                <li>Negotiate with real numbers</li>
+              </ul>
+              <button
+                className="btn btn-primary paywall-btn"
+                onClick={handleUpgrade}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? "Loading..." : "Upgrade Now — $4.99"}
+              </button>
+              <button className="gate-toggle" onClick={handleReset}>
+                Back
+              </button>
+            </div>
+          </div>
+        )}
         {screen === "error" && (
-          <ErrorScreen
-            error={error === "limit_reached"
-              ? "You've used all 3 free scans. Subscription coming soon — contact info@gougestop.com for more access."
-              : error}
-            onRetry={handleReset}
-          />
+          <ErrorScreen error={error} onRetry={handleReset} />
         )}
       </main>
 
