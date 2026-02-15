@@ -731,9 +731,84 @@ body {
   font-style: italic;
 }
 
-/* Scan again button */
-.scan-again {
+/* Results action buttons */
+.results-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin-top: 8px;
+}
+
+/* Share modal overlay */
+.share-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.share-modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.share-modal h3 {
+  font-size: 20px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.share-modal > p {
+  font-size: 14px;
+  color: var(--gray-500);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.share-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.share-input:focus {
+  border-color: var(--blue-accent);
+}
+
+.share-msg {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.share-msg.success {
+  color: #155724;
+  background: var(--green-bg);
+}
+
+.share-msg.error {
+  color: var(--red);
+  background: var(--red-bg);
 }
 
 /* ===== ACCESS GATE ===== */

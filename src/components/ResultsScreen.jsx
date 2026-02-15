@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://web-production-c5039.up.railway.app";
+
 function fmt(num) {
   if (num == null) return "N/A";
   return "$" + num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -11,8 +13,71 @@ function pct(num) {
   return sign + Math.round(num) + "%";
 }
 
+function buildResultsHTML(r) {
+  const docLabel = { bill: "Bill", order: "Order", abn: "ABN" }[r.document_type] || "Document";
+  const hasBillData = r.document_type === "bill" || r.document_type === "abn";
+
+  let html = `<h2 style="color:#1B3A5C;font-size:20px;margin-bottom:12px;">Your GougeStop Results</h2>`;
+
+  if (r.provider_name || r.date_of_service) {
+    html += `<p style="color:#6c757d;font-size:14px;margin-bottom:16px;">`;
+    if (r.provider_name) html += r.provider_name;
+    if (r.provider_name && r.date_of_service) html += ` &middot; `;
+    if (r.date_of_service) html += r.date_of_service;
+    html += ` (${docLabel})</p>`;
+  }
+
+  // Totals
+  html += `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">`;
+  html += `<div style="flex:1;min-width:120px;background:#d4edda;border-radius:8px;padding:12px;text-align:center;">`;
+  html += `<div style="font-size:11px;font-weight:600;color:#495057;text-transform:uppercase;">Medicare Allows</div>`;
+  html += `<div style="font-size:22px;font-weight:700;color:#28a745;">${fmt(r.total_medicare_allowed)}</div></div>`;
+
+  if (hasBillData && r.total_provider_charges) {
+    html += `<div style="flex:1;min-width:120px;background:#f8d7da;border-radius:8px;padding:12px;text-align:center;">`;
+    html += `<div style="font-size:11px;font-weight:600;color:#495057;text-transform:uppercase;">Provider Charged</div>`;
+    html += `<div style="font-size:22px;font-weight:700;color:#dc3545;">${fmt(r.total_provider_charges)}</div></div>`;
+  }
+  html += `</div>`;
+
+  if (hasBillData && r.total_markup != null) {
+    html += `<div style="background:#ffecd2;border-radius:8px;padding:12px;text-align:center;margin-bottom:20px;">`;
+    html += `<div style="font-size:11px;font-weight:600;color:#495057;text-transform:uppercase;">You Were Overcharged</div>`;
+    html += `<div style="font-size:22px;font-weight:700;color:#e67e22;">${fmt(r.total_markup)}</div>`;
+    if (r.average_markup_percent != null) {
+      html += `<div style="font-size:12px;color:#6c757d;">Average markup: ${pct(r.average_markup_percent)}</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Line items
+  html += `<h3 style="color:#1B3A5C;font-size:16px;margin-bottom:12px;">Test-by-Test Breakdown</h3>`;
+  html += `<table style="width:100%;border-collapse:collapse;font-size:14px;">`;
+  html += `<tr style="border-bottom:2px solid #dee2e6;"><th style="text-align:left;padding:8px 4px;">Test</th>`;
+  html += `<th style="text-align:right;padding:8px 4px;">Medicare</th>`;
+  if (hasBillData) html += `<th style="text-align:right;padding:8px 4px;">Charged</th>`;
+  html += `</tr>`;
+
+  for (const item of r.items) {
+    html += `<tr style="border-bottom:1px solid #e9ecef;">`;
+    html += `<td style="padding:8px 4px;"><strong>${item.cpt_code}</strong> ${item.test_description || ""}</td>`;
+    html += `<td style="text-align:right;padding:8px 4px;color:#28a745;font-weight:600;">${fmt(item.medicare_allowed)}</td>`;
+    if (hasBillData) {
+      html += `<td style="text-align:right;padding:8px 4px;color:#dc3545;font-weight:600;">${item.provider_charge != null ? fmt(item.provider_charge) : "—"}</td>`;
+    }
+    html += `</tr>`;
+  }
+  html += `</table>`;
+
+  return html;
+}
+
 export default function ResultsScreen({ results, onReset }) {
   const [expandedLab, setExpandedLab] = useState(null);
+  const [showShare, setShowShare] = useState(false);
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareSending, setShareSending] = useState(false);
+  const [shareMsg, setShareMsg] = useState("");
   const r = results;
 
   const docLabel = {
@@ -22,6 +87,47 @@ export default function ResultsScreen({ results, onReset }) {
   }[r.document_type] || "Document";
 
   const hasBillData = r.document_type === "bill" || r.document_type === "abn";
+
+  const handleShare = async () => {
+    if (!shareEmail.trim() || !shareEmail.includes("@")) {
+      setShareMsg("Please enter a valid email address.");
+      return;
+    }
+
+    setShareSending(true);
+    setShareMsg("");
+
+    const token = localStorage.getItem("gs_token") || "";
+
+    try {
+      const resp = await fetch(`${API_URL}/share-results`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          recipient_email: shareEmail.trim(),
+          results_html: buildResultsHTML(r),
+        }),
+      });
+
+      const data = await resp.json();
+
+      if (resp.ok && data.success) {
+        setShareMsg("Sent! Check your inbox.");
+        setTimeout(() => {
+          setShowShare(false);
+          setShareMsg("");
+          setShareEmail("");
+        }, 2000);
+      } else {
+        setShareMsg(data.detail || "Failed to send. Please try again.");
+      }
+    } catch {
+      setShareMsg("Failed to send. Please try again.");
+    } finally {
+      setShareSending(false);
+    }
+  };
 
   return (
     <div className="results-screen">
@@ -167,12 +273,49 @@ export default function ResultsScreen({ results, onReset }) {
       {/* Disclaimer */}
       <p className="disclaimer">{r.data_disclaimer}</p>
 
-      {/* Scan again */}
-      <div className="scan-again">
+      {/* Action Buttons */}
+      <div className="results-actions">
+        <button className="btn btn-primary" onClick={() => setShowShare(true)}>
+          Email These Results
+        </button>
         <button className="btn btn-secondary" onClick={onReset}>
           Scan Another Document
         </button>
       </div>
+
+      {/* Share Modal */}
+      {showShare && (
+        <div className="share-overlay" onClick={() => { setShowShare(false); setShareMsg(""); }}>
+          <div className="share-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Email Your Results</h3>
+            <p>Send a copy to yourself, your doctor, or a friend.</p>
+            <input
+              type="email"
+              className="share-input"
+              placeholder="Enter email address"
+              value={shareEmail}
+              onChange={(e) => setShareEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleShare()}
+              autoFocus
+            />
+            {shareMsg && (
+              <div className={`share-msg ${shareMsg.includes("Sent") ? "success" : "error"}`}>
+                {shareMsg}
+              </div>
+            )}
+            <button
+              className="btn btn-primary"
+              onClick={handleShare}
+              disabled={shareSending}
+            >
+              {shareSending ? "Sending..." : "Send Results"}
+            </button>
+            <button className="gate-toggle" onClick={() => { setShowShare(false); setShareMsg(""); }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
