@@ -337,21 +337,40 @@
       margin-top: 12px;
     }
 
+    .story-banner {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 24px;
+      margin: 32px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+      border-left: 5px solid #FF6B6B;
+    }
+
+    .story-banner .story-teaser {
+      font-size: 17px;
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
     .story-link {
       display: inline-block;
       font-size: 18px;
-      font-weight: 600;
-      color: #1B3A5C;
+      font-weight: 700;
+      color: #fff;
       text-decoration: none;
       padding: 14px 32px;
-      border: 2px solid #1B3A5C;
+      background: linear-gradient(135deg, #FF6B6B, #e55a5a);
       border-radius: 12px;
       transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
     }
 
     .story-link:hover {
-      background: #1B3A5C;
-      color: #fff;
+      background: linear-gradient(135deg, #e55a5a, #d44a4a);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(255, 107, 107, 0.4);
     }
 
     /* ===== FOOTER ===== */
@@ -401,6 +420,12 @@
       <div class="stat-number">392%</div>
       <div class="stat-label">Average lab markup over Medicare rates</div>
       <div class="stat-detail">For the same routine blood work, one lab charges $29 and another charges $2,776. Same tests. Same results.</div>
+    </div>
+
+    <!-- Why I Built This -->
+    <div class="story-banner">
+      <p class="story-teaser">This started with a $217 bill for $27 worth of tests &mdash; and a system that wouldn't tell me the real numbers.</p>
+      <a href="/our-story" class="story-link">Why I Built GougeStop &rarr;</a>
     </div>
 
     <!-- How It Works -->
@@ -525,11 +550,6 @@
         <div class="free-badge">Free During Beta</div>
         <p>GougeStop is free right now during our testing period. When we do add a small fee, our goal is simple — it should save you many times what it costs.</p>
       </div>
-    </div>
-
-    <!-- Why I Built This -->
-    <div class="section" style="text-align: center;">
-      <a href="/our-story" class="story-link">Why I Built GougeStop &rarr;</a>
     </div>
 
     <!-- CTA -->
