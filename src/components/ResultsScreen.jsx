@@ -42,10 +42,10 @@ function buildResultsHTML(r) {
 
   if (hasBillData && r.total_markup != null) {
     html += `<div style="background:#ffecd2;border-radius:8px;padding:12px;text-align:center;margin-bottom:20px;">`;
-    html += `<div style="font-size:11px;font-weight:600;color:#495057;text-transform:uppercase;">You Were Overcharged</div>`;
+    html += `<div style="font-size:11px;font-weight:600;color:#495057;text-transform:uppercase;">Premium Above Medicare Rate</div>`;
     html += `<div style="font-size:22px;font-weight:700;color:#e67e22;">${fmt(r.total_markup)}</div>`;
     if (r.average_markup_percent != null) {
-      html += `<div style="font-size:12px;color:#6c757d;">Average markup: ${pct(r.average_markup_percent)}</div>`;
+      html += `<div style="font-size:12px;color:#6c757d;">Average premium: ${pct(r.average_markup_percent)}</div>`;
     }
     html += `</div>`;
   }
@@ -161,11 +161,11 @@ export default function ResultsScreen({ results, onReset }) {
 
           {hasBillData && r.total_markup != null && (
             <div className="total-box markup">
-              <div className="total-label">You Were Overcharged</div>
+              <div className="total-label">Premium Above Medicare Rate</div>
               <div className="total-value">{fmt(r.total_markup)}</div>
               {r.average_markup_percent != null && (
                 <div className="total-sub">
-                  Average markup: {pct(r.average_markup_percent)}
+                  Average premium: {pct(r.average_markup_percent)}
                 </div>
               )}
             </div>
@@ -191,7 +191,7 @@ export default function ResultsScreen({ results, onReset }) {
               <span className="item-cpt">{item.cpt_code}</span>
               {item.markup_percent != null && (
                 <span className={`item-markup ${item.markup_percent > 0 ? "positive" : "negative"}`}>
-                  {pct(item.markup_percent)} markup
+                  {pct(item.markup_percent)} premium
                 </span>
               )}
             </div>
@@ -214,7 +214,7 @@ export default function ResultsScreen({ results, onReset }) {
               )}
               {item.markup_dollars != null && (
                 <div>
-                  <div className="item-price-label">Overcharge</div>
+                  <div className="item-price-label">Premium</div>
                   <div className="item-price-val provider">{fmt(item.markup_dollars)}</div>
                 </div>
               )}

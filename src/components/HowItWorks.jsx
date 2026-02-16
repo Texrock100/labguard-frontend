@@ -24,7 +24,7 @@ export default function HowItWorks({ onClose }) {
           <span className="hiw-num">2</span>
           <div>
             <strong>See What's Fair</strong>
-            <p>GougeStop shows you what Medicare says each test should cost. If you uploaded a bill, you'll see the overcharge on every test in plain dollars.</p>
+            <p>GougeStop shows you what Medicare says each test should cost. If you uploaded a bill, you'll see the premium above the Medicare rate on every test in plain dollars.</p>
           </div>
         </div>
 
@@ -48,7 +48,7 @@ export default function HowItWorks({ onClose }) {
           <span className="hiw-num">5</span>
           <div>
             <strong>Fight Unfair Charges</strong>
-            <p>Already got a bill that's too high? Use GougeStop's numbers when you talk to the lab about lowering it. If they won't budge, use the data to write to the lab and Medicare about the markup.</p>
+            <p>Already got a bill that's too high? Use GougeStop's numbers when you talk to the lab about lowering it. If they won't budge, use the data to write to the lab and Medicare about the premium above the Medicare rate.</p>
           </div>
         </div>
       </div>
