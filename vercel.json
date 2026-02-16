@@ -2,6 +2,7 @@
   "routes": [
     { "src": "^/app$", "dest": "/index.html" },
     { "src": "^/our-story$", "dest": "/our-story.html" },
+    { "src": "^/blog$", "dest": "/blog.html" },
     { "src": "^/$", "dest": "/how-it-works.html" }
   ]
 }
