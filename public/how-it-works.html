@@ -373,13 +373,78 @@
       box-shadow: 0 4px 14px rgba(255, 107, 107, 0.4);
     }
 
+    /* ===== BLOG BANNER ===== */
+    .blog-banner {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 24px;
+      margin: 32px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+      border-left: 5px solid #4A90D9;
+    }
+
+    .blog-banner h3 {
+      font-size: 20px;
+      color: #1B3A5C;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .blog-banner p {
+      font-size: 16px;
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .blog-link {
+      display: inline-block;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #4A90D9, #357ABD);
+      border-radius: 12px;
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(74, 144, 217, 0.3);
+    }
+
+    .blog-link:hover {
+      background: linear-gradient(135deg, #357ABD, #2A6AAD);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(74, 144, 217, 0.4);
+    }
+
     /* ===== FOOTER ===== */
     .site-footer {
       background: #1B3A5C;
       color: rgba(255,255,255,0.7);
       text-align: center;
-      padding: 24px 20px;
+      padding: 28px 20px;
       font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      text-decoration: underline;
     }
 
     .site-footer a {
@@ -552,6 +617,13 @@
       </div>
     </div>
 
+    <!-- Blog & Community Banner -->
+    <div class="blog-banner">
+      <h3>Stories, Tips &amp; Ideas</h3>
+      <p>Read patient stories, get tips on fighting unfair bills, and share your own experience or ideas for making GougeStop better.</p>
+      <a href="/blog" class="blog-link">Visit the Blog &rarr;</a>
+    </div>
+
     <!-- CTA -->
     <div class="cta-section">
       <h2>Ready to See What You're Really Paying?</h2>
@@ -563,7 +635,11 @@
 
   <!-- Footer -->
   <footer class="site-footer">
-    <p style="margin-bottom: 8px;"><a href="/blog">Blog</a> &middot; <a href="/our-story">Our Story</a></p>
+    <div class="footer-links">
+      <a href="/blog">Blog</a>
+      <a href="/our-story">Our Story</a>
+      <a href="/app">Open GougeStop</a>
+    </div>
     <p>&copy; 2026 GougeStop. All rights reserved. For informational purposes only. Not medical or financial advice.</p>
   </footer>
 
