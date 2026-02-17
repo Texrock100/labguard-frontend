@@ -79,7 +79,7 @@ function buildResultsHTML(r) {
 
   // Coverage alerts in email
   if (r.coverage_alerts && r.coverage_alerts.length > 0) {
-    const flags = r.coverage_alerts.filter(a => a.alert_level === "flag" || a.alert_level === "warning");
+    const flags = r.coverage_alerts.filter(a => a.alert_level === "flag");
     if (flags.length > 0) {
       html += `<div style="margin-top:20px;padding:16px;background:#fff3cd;border-radius:8px;border-left:4px solid #ffc107;">`;
       html += `<strong style="color:#856404;">Coverage Alerts (${flags.length})</strong>`;
@@ -118,9 +118,9 @@ export default function ResultsScreen({ results, onReset }) {
     }
   }
 
-  // Count flags/warnings
+  // Count flags only (warnings removed — diagnosis code warnings no longer used)
   const flagCount = r.coverage_alerts
-    ? r.coverage_alerts.filter(a => a.alert_level === "flag" || a.alert_level === "warning").length
+    ? r.coverage_alerts.filter(a => a.alert_level === "flag").length
     : 0;
 
   const handleShare = async () => {
@@ -301,7 +301,7 @@ export default function ResultsScreen({ results, onReset }) {
         <div className="alerts-card">
           <h3>Coverage Check Details</h3>
           <p className="alerts-subtitle">
-            Each test checked against Medicare National Coverage Determinations (NCDs).
+            Each test checked against Medicare coverage rules (NCDs &amp; LCDs) for denial rates and frequency limits.
             {r.diagnosis_codes_found && r.diagnosis_codes_found.length > 0 && (
               <> Diagnosis codes found: <strong>{r.diagnosis_codes_found.join(", ")}</strong></>
             )}
@@ -350,6 +350,11 @@ export default function ResultsScreen({ results, onReset }) {
                   {alert.ncd_code && (
                     <div className="alert-ncd-ref">
                       NCD Reference: {alert.ncd_code} ({alert.ncd_name})
+                    </div>
+                  )}
+                  {!alert.ncd_code && alert.frequency_limit && alert.frequency_limit.source && (
+                    <div className="alert-ncd-ref">
+                      Source: {alert.frequency_limit.source}
                     </div>
                   )}
                 </div>
