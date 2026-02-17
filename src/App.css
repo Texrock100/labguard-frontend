@@ -1008,6 +1008,262 @@ body {
   color: #fff;
 }
 
+/* ===== COVERAGE ALERTS ===== */
+
+/* Summary banner */
+.coverage-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.coverage-banner.has-flags {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+}
+
+.coverage-banner.all-clear {
+  background: var(--green-bg);
+  border-left: 4px solid var(--green);
+}
+
+.coverage-banner-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.coverage-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coverage-banner-text strong {
+  font-size: 15px;
+  color: var(--gray-900);
+}
+
+.coverage-banner-text span {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+/* Per-test denial rate badge */
+.item-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.item-denial-rate {
+  font-size: 11px;
+  font-weight: 600;
+  color: #856404;
+  background: #fff3cd;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Inline alert on each test item */
+.item-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.item-alert-info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.item-alert-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.item-alert-flag {
+  background: var(--red-bg);
+  color: #721c24;
+}
+
+.item-alert-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.item-alert-text {
+  flex: 1;
+}
+
+/* Coverage alerts detail card */
+.alerts-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.alerts-card h3 {
+  font-size: 16px;
+  color: var(--navy);
+  padding: 16px 20px 4px;
+}
+
+.alerts-subtitle {
+  font-size: 12px;
+  color: var(--gray-500);
+  padding: 0 20px 12px;
+  line-height: 1.5;
+}
+
+.alert-row {
+  padding: 12px 20px;
+  border-top: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.alert-row:hover {
+  background: var(--gray-50);
+}
+
+.alert-row.expanded {
+  background: var(--gray-50);
+}
+
+.alert-row.alert-ok {
+  border-left: 3px solid var(--green);
+}
+
+.alert-row.alert-info {
+  border-left: 3px solid #17a2b8;
+}
+
+.alert-row.alert-warning {
+  border-left: 3px solid #ffc107;
+}
+
+.alert-row.alert-flag {
+  border-left: 3px solid var(--red);
+}
+
+.alert-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.alert-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-cpt {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.alert-title {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.4;
+}
+
+.alert-rate {
+  text-align: center;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.alert-rate-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.alert-rate-label {
+  font-size: 10px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+}
+
+/* Alert expanded detail */
+.alert-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--gray-200);
+}
+
+.alert-detail p {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.alert-freq {
+  font-size: 12px;
+  color: #856404;
+  background: #fff3cd;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.alert-codes-matched {
+  font-size: 12px;
+  color: #155724;
+  background: var(--green-bg);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.alert-codes-unmatched {
+  font-size: 12px;
+  color: #721c24;
+  background: var(--red-bg);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.alert-ncd-ref {
+  font-size: 11px;
+  color: var(--gray-500);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* Coverage disclaimer */
+.coverage-disclaimer {
+  font-size: 11px;
+  color: var(--gray-500);
+  padding: 12px 20px;
+  line-height: 1.5;
+  font-style: italic;
+  border-top: 1px solid var(--gray-100);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 400px) {
   .app-main { padding: 10px; }

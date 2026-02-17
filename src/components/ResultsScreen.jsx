@@ -13,6 +13,14 @@ function pct(num) {
   return sign + Math.round(num) + "%";
 }
 
+function alertIcon(level) {
+  if (level === "ok") return "\u2705";
+  if (level === "info") return "\u2139\uFE0F";
+  if (level === "warning") return "\u26A0\uFE0F";
+  if (level === "flag") return "\uD83D\uDEA9";
+  return "\u2139\uFE0F";
+}
+
 function buildResultsHTML(r) {
   const docLabel = { bill: "Bill", order: "Order", abn: "ABN" }[r.document_type] || "Document";
   const hasBillData = r.document_type === "bill" || r.document_type === "abn";
@@ -63,17 +71,31 @@ function buildResultsHTML(r) {
     html += `<td style="padding:8px 4px;"><strong>${item.cpt_code}</strong> ${item.test_description || ""}</td>`;
     html += `<td style="text-align:right;padding:8px 4px;color:#28a745;font-weight:600;">${fmt(item.medicare_allowed)}</td>`;
     if (hasBillData) {
-      html += `<td style="text-align:right;padding:8px 4px;color:#dc3545;font-weight:600;">${item.provider_charge != null ? fmt(item.provider_charge) : "—"}</td>`;
+      html += `<td style="text-align:right;padding:8px 4px;color:#dc3545;font-weight:600;">${item.provider_charge != null ? fmt(item.provider_charge) : "\u2014"}</td>`;
     }
     html += `</tr>`;
   }
   html += `</table>`;
+
+  // Coverage alerts in email
+  if (r.coverage_alerts && r.coverage_alerts.length > 0) {
+    const flags = r.coverage_alerts.filter(a => a.alert_level === "flag" || a.alert_level === "warning");
+    if (flags.length > 0) {
+      html += `<div style="margin-top:20px;padding:16px;background:#fff3cd;border-radius:8px;border-left:4px solid #ffc107;">`;
+      html += `<strong style="color:#856404;">Coverage Alerts (${flags.length})</strong>`;
+      for (const a of flags) {
+        html += `<p style="margin:8px 0 0;font-size:13px;color:#856404;"><strong>${a.cpt_code}</strong>: ${a.alert_title}</p>`;
+      }
+      html += `</div>`;
+    }
+  }
 
   return html;
 }
 
 export default function ResultsScreen({ results, onReset }) {
   const [expandedLab, setExpandedLab] = useState(null);
+  const [expandedAlert, setExpandedAlert] = useState(null);
   const [showShare, setShowShare] = useState(false);
   const [shareEmail, setShareEmail] = useState("");
   const [shareSending, setShareSending] = useState(false);
@@ -87,6 +109,19 @@ export default function ResultsScreen({ results, onReset }) {
   }[r.document_type] || "Document";
 
   const hasBillData = r.document_type === "bill" || r.document_type === "abn";
+
+  // Build a lookup from CPT code -> coverage alert
+  const alertByCpt = {};
+  if (r.coverage_alerts) {
+    for (const alert of r.coverage_alerts) {
+      alertByCpt[alert.cpt_code] = alert;
+    }
+  }
+
+  // Count flags/warnings
+  const flagCount = r.coverage_alerts
+    ? r.coverage_alerts.filter(a => a.alert_level === "flag" || a.alert_level === "warning").length
+    : 0;
 
   const handleShare = async () => {
     if (!shareEmail.trim() || !shareEmail.includes("@")) {
@@ -182,46 +217,152 @@ export default function ResultsScreen({ results, onReset }) {
         </div>
       </div>
 
-      {/* Line Items */}
+      {/* Coverage Alert Summary Banner */}
+      {r.coverage_alerts && r.coverage_alerts.length > 0 && (
+        <div className={`coverage-banner ${flagCount > 0 ? "has-flags" : "all-clear"}`}>
+          <div className="coverage-banner-icon">
+            {flagCount > 0 ? "\uD83D\uDEA9" : "\u2705"}
+          </div>
+          <div className="coverage-banner-text">
+            <strong>
+              {flagCount > 0
+                ? `${flagCount} Coverage Alert${flagCount > 1 ? "s" : ""} Found`
+                : "No Coverage Issues Detected"}
+            </strong>
+            <span>
+              {flagCount > 0
+                ? "Some tests may have coverage concerns. See details below."
+                : `${r.coverage_alerts.length} test${r.coverage_alerts.length > 1 ? "s" : ""} checked against Medicare NCD rules.`}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Line Items with per-test denial rate */}
       <div className="items-card">
         <h3>Test-by-Test Breakdown</h3>
-        {r.items.map((item, i) => (
-          <div className="item-row" key={i}>
-            <div className="item-header">
-              <span className="item-cpt">{item.cpt_code}</span>
-              {item.markup_percent != null && (
-                <span className={`item-markup ${item.markup_percent > 0 ? "positive" : "negative"}`}>
-                  {pct(item.markup_percent)} premium
-                </span>
-              )}
-            </div>
-            <div className="item-desc">
-              {item.test_description}
-              {item.medicare_description && item.medicare_description !== item.test_description && (
-                <> &mdash; {item.medicare_description}</>
-              )}
-            </div>
-            <div className="item-prices">
-              <div>
-                <div className="item-price-label">Medicare Allows</div>
-                <div className="item-price-val medicare">{fmt(item.medicare_allowed)}</div>
+        {r.items.map((item, i) => {
+          const alert = alertByCpt[item.cpt_code];
+          return (
+            <div className="item-row" key={i}>
+              <div className="item-header">
+                <span className="item-cpt">{item.cpt_code}</span>
+                <div className="item-badges">
+                  {alert && alert.denial_rate != null && (
+                    <span className="item-denial-rate" title="Estimated Medicare denial rate for this test category">
+                      {Math.round(alert.denial_rate)}% denial rate
+                    </span>
+                  )}
+                  {item.markup_percent != null && (
+                    <span className={`item-markup ${item.markup_percent > 0 ? "positive" : "negative"}`}>
+                      {pct(item.markup_percent)} premium
+                    </span>
+                  )}
+                </div>
               </div>
-              {hasBillData && item.provider_charge != null && (
+              <div className="item-desc">
+                {item.test_description}
+                {item.medicare_description && item.medicare_description !== item.test_description && (
+                  <> &mdash; {item.medicare_description}</>
+                )}
+              </div>
+              <div className="item-prices">
                 <div>
-                  <div className="item-price-label">Provider Charged</div>
-                  <div className="item-price-val provider">{fmt(item.provider_charge)}</div>
+                  <div className="item-price-label">Medicare Allows</div>
+                  <div className="item-price-val medicare">{fmt(item.medicare_allowed)}</div>
                 </div>
-              )}
-              {item.markup_dollars != null && (
-                <div>
-                  <div className="item-price-label">Premium</div>
-                  <div className="item-price-val provider">{fmt(item.markup_dollars)}</div>
+                {hasBillData && item.provider_charge != null && (
+                  <div>
+                    <div className="item-price-label">Provider Charged</div>
+                    <div className="item-price-val provider">{fmt(item.provider_charge)}</div>
+                  </div>
+                )}
+                {item.markup_dollars != null && (
+                  <div>
+                    <div className="item-price-label">Premium</div>
+                    <div className="item-price-val provider">{fmt(item.markup_dollars)}</div>
+                  </div>
+                )}
+              </div>
+              {/* Inline coverage alert for this test */}
+              {alert && alert.alert_level !== "ok" && (
+                <div className={`item-alert item-alert-${alert.alert_level}`}>
+                  <span className="item-alert-icon">{alertIcon(alert.alert_level)}</span>
+                  <span className="item-alert-text">{alert.alert_title}</span>
                 </div>
               )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* Coverage Alerts Detail Section */}
+      {r.coverage_alerts && r.coverage_alerts.length > 0 && (
+        <div className="alerts-card">
+          <h3>Coverage Check Details</h3>
+          <p className="alerts-subtitle">
+            Each test checked against Medicare National Coverage Determinations (NCDs).
+            {r.diagnosis_codes_found && r.diagnosis_codes_found.length > 0 && (
+              <> Diagnosis codes found: <strong>{r.diagnosis_codes_found.join(", ")}</strong></>
+            )}
+          </p>
+
+          {r.coverage_alerts.map((alert, i) => (
+            <div
+              className={`alert-row alert-${alert.alert_level} ${expandedAlert === i ? "expanded" : ""}`}
+              key={i}
+              onClick={() => setExpandedAlert(expandedAlert === i ? null : i)}
+            >
+              <div className="alert-main">
+                <div className="alert-left">
+                  <span className="alert-icon">{alertIcon(alert.alert_level)}</span>
+                  <div>
+                    <div className="alert-cpt">{alert.cpt_code}</div>
+                    <div className="alert-title">{alert.alert_title}</div>
+                  </div>
+                </div>
+                {alert.denial_rate != null && (
+                  <div className="alert-rate">
+                    <div className="alert-rate-num">{Math.round(alert.denial_rate)}%</div>
+                    <div className="alert-rate-label">denial rate</div>
+                  </div>
+                )}
+              </div>
+
+              {expandedAlert === i && (
+                <div className="alert-detail">
+                  <p>{alert.alert_detail}</p>
+                  {alert.frequency_limit && (
+                    <div className="alert-freq">
+                      Frequency limit: {alert.frequency_limit.limit}x per {alert.frequency_limit.period}
+                    </div>
+                  )}
+                  {alert.matched_codes && alert.matched_codes.length > 0 && (
+                    <div className="alert-codes-matched">
+                      Matching diagnosis codes: {alert.matched_codes.join(", ")}
+                    </div>
+                  )}
+                  {alert.unmatched_codes && alert.unmatched_codes.length > 0 && (
+                    <div className="alert-codes-unmatched">
+                      Non-matching codes: {alert.unmatched_codes.join(", ")}
+                    </div>
+                  )}
+                  {alert.ncd_code && (
+                    <div className="alert-ncd-ref">
+                      NCD Reference: {alert.ncd_code} ({alert.ncd_name})
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Coverage disclaimer */}
+          {r.coverage_disclaimer && (
+            <p className="coverage-disclaimer">{r.coverage_disclaimer}</p>
+          )}
+        </div>
+      )}
 
       {/* Nearby Labs */}
       {r.nearby_labs && r.nearby_labs.length > 0 && (
