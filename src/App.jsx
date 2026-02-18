@@ -113,6 +113,15 @@ function App() {
 
       setResults(data);
       setScreen("results");
+
+      // GA4: Track successful scan
+      if (window.gtag) {
+        window.gtag('event', 'scan_completed', {
+          document_type: data.document_type || 'unknown',
+          tests_found: data.items ? data.items.length : 0,
+          has_markup: data.total_markup != null,
+        });
+      }
     } catch (err) {
       setError(err.message);
       setScreen("error");

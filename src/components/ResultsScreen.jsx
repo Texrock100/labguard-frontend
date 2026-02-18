@@ -149,6 +149,12 @@ export default function ResultsScreen({ results, onReset }) {
       const data = await resp.json();
 
       if (resp.ok && data.success) {
+        // GA4: Track email share
+        if (window.gtag) {
+          window.gtag('event', 'results_shared', {
+            document_type: r.document_type || 'unknown',
+          });
+        }
         setShareMsg("Sent! Check your inbox.");
         setTimeout(() => {
           setShowShare(false);
