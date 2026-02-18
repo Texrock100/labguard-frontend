@@ -77,14 +77,14 @@ function buildResultsHTML(r) {
   }
   html += `</table>`;
 
-  // Coverage alerts in email
+  // Frequency limits in email (GougeStop only shows frequency limits, not full coverage checks)
   if (r.coverage_alerts && r.coverage_alerts.length > 0) {
-    const flags = r.coverage_alerts.filter(a => a.alert_level === "flag");
-    if (flags.length > 0) {
-      html += `<div style="margin-top:20px;padding:16px;background:#fff3cd;border-radius:8px;border-left:4px solid #ffc107;">`;
-      html += `<strong style="color:#856404;">Coverage Alerts (${flags.length})</strong>`;
-      for (const a of flags) {
-        html += `<p style="margin:8px 0 0;font-size:13px;color:#856404;"><strong>${a.cpt_code}</strong>: ${a.alert_title}</p>`;
+    const freqOnly = r.coverage_alerts.filter(a => a.frequency_limit);
+    if (freqOnly.length > 0) {
+      html += `<div style="margin-top:20px;padding:16px;background:#d1ecf1;border-radius:8px;border-left:4px solid #17a2b8;">`;
+      html += `<strong style="color:#0c5460;">Medicare Frequency Limits (${freqOnly.length})</strong>`;
+      for (const a of freqOnly) {
+        html += `<p style="margin:8px 0 0;font-size:13px;color:#0c5460;"><strong>${a.cpt_code}</strong>: ${a.frequency_limit.limit}x per ${a.frequency_limit.period}</p>`;
       }
       html += `</div>`;
     }
@@ -112,16 +112,17 @@ export default function ResultsScreen({ results, onReset }) {
 
   // Build a lookup from CPT code -> coverage alert
   const alertByCpt = {};
-  if (r.coverage_alerts) {
-    for (const alert of r.coverage_alerts) {
-      alertByCpt[alert.cpt_code] = alert;
-    }
+  // GougeStop only shows frequency limit alerts (not diagnosis code coverage checks).
+  // Full coverage analysis is reserved for Medicare PreCheck.
+  const freqAlerts = r.coverage_alerts
+    ? r.coverage_alerts.filter(a => a.frequency_limit)
+    : [];
+
+  for (const alert of freqAlerts) {
+    alertByCpt[alert.cpt_code] = alert;
   }
 
-  // Count flags only (warnings removed — diagnosis code warnings no longer used)
-  const flagCount = r.coverage_alerts
-    ? r.coverage_alerts.filter(a => a.alert_level === "flag").length
-    : 0;
+  const flagCount = 0; // No coverage flags in GougeStop — frequency limits are info-level only
 
   const handleShare = async () => {
     if (!shareEmail.trim() || !shareEmail.includes("@")) {
@@ -217,22 +218,14 @@ export default function ResultsScreen({ results, onReset }) {
         </div>
       </div>
 
-      {/* Coverage Alert Summary Banner */}
-      {r.coverage_alerts && r.coverage_alerts.length > 0 && (
-        <div className={`coverage-banner ${flagCount > 0 ? "has-flags" : "all-clear"}`}>
-          <div className="coverage-banner-icon">
-            {flagCount > 0 ? "\uD83D\uDEA9" : "\u2705"}
-          </div>
+      {/* Frequency Limit Banner */}
+      {freqAlerts.length > 0 && (
+        <div className="coverage-banner all-clear">
+          <div className="coverage-banner-icon">{"\u2139\uFE0F"}</div>
           <div className="coverage-banner-text">
-            <strong>
-              {flagCount > 0
-                ? `${flagCount} Coverage Alert${flagCount > 1 ? "s" : ""} Found`
-                : "No Coverage Issues Detected"}
-            </strong>
+            <strong>Medicare Frequency Limits</strong>
             <span>
-              {flagCount > 0
-                ? "Some tests may have coverage concerns. See details below."
-                : `${r.coverage_alerts.length} test${r.coverage_alerts.length > 1 ? "s" : ""} checked against Medicare NCD rules.`}
+              {freqAlerts.length} test{freqAlerts.length > 1 ? "s" : ""} ha{freqAlerts.length > 1 ? "ve" : "s"} Medicare frequency limits. See details below.
             </span>
           </div>
         </div>
@@ -284,11 +277,13 @@ export default function ResultsScreen({ results, onReset }) {
                   </div>
                 )}
               </div>
-              {/* Inline coverage alert for this test */}
-              {alert && alert.alert_level !== "ok" && (
-                <div className={`item-alert item-alert-${alert.alert_level}`}>
-                  <span className="item-alert-icon">{alertIcon(alert.alert_level)}</span>
-                  <span className="item-alert-text">{alert.alert_title}</span>
+              {/* Inline frequency limit note for this test */}
+              {alert && alert.frequency_limit && (
+                <div className="item-alert item-alert-info">
+                  <span className="item-alert-icon">{"\u2139\uFE0F"}</span>
+                  <span className="item-alert-text">
+                    Frequency limit: {alert.frequency_limit.limit}x per {alert.frequency_limit.period}
+                  </span>
                 </div>
               )}
             </div>
@@ -296,29 +291,28 @@ export default function ResultsScreen({ results, onReset }) {
         })}
       </div>
 
-      {/* Coverage Alerts Detail Section */}
-      {r.coverage_alerts && r.coverage_alerts.length > 0 && (
+      {/* Frequency Limits Detail Section */}
+      {freqAlerts.length > 0 && (
         <div className="alerts-card">
-          <h3>Coverage Check Details</h3>
+          <h3>Medicare Frequency Limits</h3>
           <p className="alerts-subtitle">
-            Each test checked against Medicare coverage rules (NCDs &amp; LCDs) for denial rates and frequency limits.
-            {r.diagnosis_codes_found && r.diagnosis_codes_found.length > 0 && (
-              <> Diagnosis codes found: <strong>{r.diagnosis_codes_found.join(", ")}</strong></>
-            )}
+            Tests with Medicare frequency limits. If you've had these tests recently, Medicare may not cover them again within the limit period.
           </p>
 
-          {r.coverage_alerts.map((alert, i) => (
+          {freqAlerts.map((alert, i) => (
             <div
-              className={`alert-row alert-${alert.alert_level} ${expandedAlert === i ? "expanded" : ""}`}
+              className={`alert-row alert-info ${expandedAlert === i ? "expanded" : ""}`}
               key={i}
               onClick={() => setExpandedAlert(expandedAlert === i ? null : i)}
             >
               <div className="alert-main">
                 <div className="alert-left">
-                  <span className="alert-icon">{alertIcon(alert.alert_level)}</span>
+                  <span className="alert-icon">{"\u2139\uFE0F"}</span>
                   <div>
                     <div className="alert-cpt">{alert.cpt_code}</div>
-                    <div className="alert-title">{alert.alert_title}</div>
+                    <div className="alert-title">
+                      {alert.frequency_limit.limit}x per {alert.frequency_limit.period}
+                    </div>
                   </div>
                 </div>
                 {alert.denial_rate != null && (
@@ -331,32 +325,11 @@ export default function ResultsScreen({ results, onReset }) {
 
               {expandedAlert === i && (
                 <div className="alert-detail">
-                  <p>{alert.alert_detail}</p>
-                  {alert.frequency_limit && (
-                    <div className="alert-freq">
-                      Frequency limit: {alert.frequency_limit.limit}x per {alert.frequency_limit.period}
-                    </div>
-                  )}
-                  {alert.matched_codes && alert.matched_codes.length > 0 && (
-                    <div className="alert-codes-matched">
-                      Matching diagnosis codes: {alert.matched_codes.join(", ")}
-                    </div>
-                  )}
-                  {alert.unmatched_codes && alert.unmatched_codes.length > 0 && (
-                    <div className="alert-codes-unmatched">
-                      Non-matching codes: {alert.unmatched_codes.join(", ")}
-                    </div>
-                  )}
-                  {alert.ncd_code && (
-                    <div className="alert-ncd-ref">
-                      NCD Reference: {alert.ncd_code} ({alert.ncd_name})
-                    </div>
-                  )}
-                  {!alert.ncd_code && alert.frequency_limit && alert.frequency_limit.source && (
-                    <div className="alert-ncd-ref">
-                      Source: {alert.frequency_limit.source}
-                    </div>
-                  )}
+                  <p>
+                    Medicare limits this test to {alert.frequency_limit.limit}x per {alert.frequency_limit.period}.
+                    If you've had this test recently, that may explain a denial or higher out-of-pocket cost.
+                    Check with your doctor about timing for your next test.
+                  </p>
                 </div>
               )}
             </div>
@@ -374,7 +347,7 @@ export default function ResultsScreen({ results, onReset }) {
         <div className="labs-card">
           <h3>Nearby Labs &mdash; Estimated Total</h3>
           <p className="labs-subtitle">
-            Tap a lab to see per-test pricing. Based on 2023 Medicare claims data.
+            Tap a lab to see per-test pricing. Lab pricing based on 2023 Medicare claims data. Actual charges may vary and available providers may have changed since then.
           </p>
           {r.nearby_labs.map((lab, i) => (
             <div
