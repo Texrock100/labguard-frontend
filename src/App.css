@@ -77,6 +77,65 @@ body {
   padding: 16px;
 }
 
+/* ===== HEADER NAV ===== */
+.header-nav {
+  background: #152e4a;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 20px;
+}
+
+.nav-link {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #FF6B6B;
+}
+
+.nav-cta {
+  color: #FF6B6B;
+  font-weight: 600;
+}
+
+.nav-cta:hover {
+  color: #ffffff;
+}
+
+/* ===== FOOTER LINKS ===== */
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+.footer-link {
+  color: var(--gray-500);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--navy);
+}
+
+.footer-cta {
+  color: #FF6B6B;
+  font-weight: 600;
+}
+
+.footer-cta:hover {
+  color: var(--navy);
+}
+
 .app-footer {
   padding: 12px 20px;
   text-align: center;
