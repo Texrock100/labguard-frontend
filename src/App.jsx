@@ -148,7 +148,12 @@ function App() {
           </h1>
           <p className="app-tagline">Know what Medicare pays. Stop overpaying.</p>
         </div>
-      </header>
+              <nav className="header-nav">
+            <a href="/blog" className="nav-link">Blog</a>
+            <a href="/our-story" className="nav-link">Our Story</a>
+            <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
+          </nav>
+        </header>
 
       <main className="app-main">
         {screen === "capture" && (
@@ -206,6 +211,11 @@ function App() {
       </main>
 
       <footer className="app-footer">
+        <div className="footer-links">
+          <a href="/blog" className="footer-link">Blog</a>
+          <a href="/our-story" className="footer-link">Our Story</a>
+          <a href="/app" className="footer-link footer-cta">Open GougeStop</a>
+        </div>
         <p>GougeStop is for informational purposes only. Not medical or financial advice.</p>
       </footer>
     </div>
