@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GougeStop Admin - QC Review</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F5F7FA; color: #1B3A5C; }
+    .admin-header { background: #1B3A5C; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .admin-header h1 { font-size: 20px; font-weight: 600; }
+    .admin-header .logo { display: flex; align-items: center; gap: 10px; }
+    .admin-header .badge { background: #FF6B6B; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .login-screen { max-width: 400px; margin: 80px auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .login-screen h2 { margin-bottom: 20px; font-size: 18px; }
+    .login-screen input { width: 100%; padding: 10px 14px; border: 1px solid #D0D5DD; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
+    .login-screen button { width: 100%; padding: 10px; background: #1B3A5C; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .login-screen button:hover { background: #152e4a; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .stat-card .label { font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #1B3A5C; }
+    .stat-card .sub { font-size: 12px; color: #98A2B3; margin-top: 2px; }
+    .controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .controls select, .controls button { padding: 8px 14px; border: 1px solid #D0D5DD; border-radius: 8px; font-size: 13px; background: white; cursor: pointer; }
+    .controls button { background: #1B3A5C; color: white; border: none; font-weight: 600; }
+    .controls button:hover { background: #152e4a; }
+    .controls button.secondary { background: white; color: #1B3A5C; border: 1px solid #D0D5DD; }
+    .controls button.secondary:hover { background: #F5F7FA; }
+
+    .scan-table { width: 100%; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .scan-table table { width: 100%; border-collapse: collapse; }
+    .scan-table th { background: #F8FAFC; text-align: left; padding: 10px 14px; font-size: 12px; color: #667085; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #EAECF0; }
+    .scan-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #F2F4F7; }
+    .scan-table tr:hover { background: #F8FAFC; cursor: pointer; }
+    .tier-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .tier-1 { background: #ECFDF5; color: #065F46; }
+    .tier-2 { background: #FFF8E1; color: #92400E; }
+    .tier-3 { background: #FEF2F2; color: #991B1B; }
+    .reviewed-yes { color: #065F46; }
+    .reviewed-no { color: #DC2626; font-weight: 600; }
+    .detail-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+    .detail-modal.active { display: flex; justify-content: center; padding: 40px 20px; }
+    .detail-content { background: white; border-radius: 12px; max-width: 1000px; width: 100%; padding: 24px; position: relative; max-height: calc(100vh - 80px); overflow-y: auto; }
+    .detail-close { position: absolute; top: 12px; right: 16px; font-size: 24px; cursor: pointer; color: #667085; background: none; border: none; }
+    .detail-close:hover { color: #1B3A5C; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+    .detail-section { background: #F8FAFC; border-radius: 8px; padding: 16px; }
+    .detail-section h3 { font-size: 14px; color: #667085; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-section img { max-width: 100%; border-radius: 6px; border: 1px solid #EAECF0; }
+    .items-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 8px; }
+    .items-table th { text-align: left; padding: 6px 8px; background: #EAECF0; font-size: 11px; }
+    .items-table td { padding: 6px 8px; border-bottom: 1px solid #F2F4F7; }
+    .flag-item { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px; }
+    .review-form { margin-top: 16px; padding: 16px; background: #F0F7FF; border-radius: 8px; }
+    .review-form label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+    .review-form input, .review-form textarea { width: 100%; padding: 8px 12px; border: 1px solid #D0D5DD; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
+    .review-form textarea { min-height: 60px; resize: vertical; }
+    .review-form button { padding: 8px 20px; background: #065F46; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .review-form button:hover { background: #047857; }
+    .accuracy-bar { height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+    .accuracy-fill { height: 100%; border-radius: 4px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #98A2B3; }
+    .empty-state h3 { font-size: 16px; margin-bottom: 8px; color: #667085; }
+    .loading { text-align: center; padding: 40px; color: #667085; }
+    @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div class="logo">
+    <span>GougeStop</span>
+    <span class="badge">ADMIN</span>
+  </div>
+  <span id="header-status" style="font-size:13px;opacity:0.7;"></span>
+</div>
+
+<!-- Login Screen -->
+<div id="login-screen" class="login-screen">
+  <h2>QC Admin Login</h2>
+  <input type="password" id="admin-token" placeholder="Enter admin token" onkeydown="if(event.key==='Enter')doLogin()">
+  <button onclick="doLogin()">Sign In</button>
+  <p id="login-error" style="color:#DC2626;font-size:13px;margin-top:8px;display:none;"></p>
+</div>
+
+<!-- Main Admin Content (hidden until login) -->
+<div id="admin-main" class="container" style="display:none;">
+
+  <!-- Stats Cards -->
+  <div class="stats-grid" id="stats-grid"></div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <select id="filter-tier" onchange="loadScans()">
+      <option value="">All Tiers</option>
+      <option value="1">Tier 1 (Good)</option>
+      <option value="2">Tier 2 (Marginal)</option>
+      <option value="3">Tier 3 (Poor)</option>
+    </select>
+    <select id="filter-reviewed" onchange="loadScans()">
+      <option value="">All Status</option>
+      <option value="false">Unreviewed</option>
+      <option value="true">Reviewed</option>
+    </select>
+    <button onclick="loadScans()">Refresh</button>
+    <button class="secondary" onclick="loadStats()">Update Stats</button>
+  </div>
+
+  <!-- Scans Table -->
+  <div class="scan-table" id="scans-container">
+    <div class="loading">Loading scans...</div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="detail-modal" id="detail-modal">
+  <div class="detail-content">
+    <button class="detail-close" onclick="closeDetail()">&times;</button>
+    <h2 id="detail-title" style="font-size:18px;margin-bottom:4px;"></h2>
+    <p id="detail-meta" style="font-size:13px;color:#667085;"></p>
+
+    <div class="detail-grid">
+      <div class="detail-section">
+        <h3>Redacted Image</h3>
+        <div id="detail-image"></div>
+      </div>
+      <div class="detail-section">
+        <h3>Extracted Results</h3>
+        <div id="detail-results"></div>
+      </div>
+    </div>
+
+    <div class="detail-grid" style="margin-top:16px;">
+      <div class="detail-section">
+        <h3>CPT Validation Flags</h3>
+        <div id="detail-flags"></div>
+      </div>
+      <div class="detail-section">
+        <h3>Quality Scores</h3>
+        <div id="detail-quality"></div>
+      </div>
+    </div>
+
+    <div class="detail-grid" style="margin-top:16px;">
+      <div class="detail-section" style="grid-column:1/-1;">
+        <h3>Raw AI Output</h3>
+        <pre id="detail-raw" style="font-size:11px;overflow-x:auto;max-height:300px;overflow-y:auto;background:#fff;padding:12px;border-radius:6px;border:1px solid #EAECF0;"></pre>
+      </div>
+    </div>
+
+    <!-- Review Form -->
+    <div class="review-form" id="review-form">
+      <h3 style="font-size:15px;margin-bottom:12px;">Review This Scan</h3>
+      <label>Accuracy Score (0.0 = wrong, 1.0 = perfect)</label>
+      <input type="number" id="review-score" min="0" max="1" step="0.1" value="1.0">
+      <label>Notes</label>
+      <textarea id="review-notes" placeholder="Optional notes about what was wrong or right..."></textarea>
+      <button onclick="submitReview()">Mark as Reviewed</button>
+      <span id="review-status" style="margin-left:12px;font-size:13px;"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "https://web-production-c5039.up.railway.app";
+let TOKEN = "";
+let currentScanId = null;
+
+function doLogin() {
+  TOKEN = document.getElementById("admin-token").value.trim();
+  if (!TOKEN) return;
+  fetch(API + "/admin/qc/stats?token=" + encodeURIComponent(TOKEN))
+    .then(r => { if (!r.ok) throw new Error("Invalid token"); return r.json(); })
+    .then(() => {
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("admin-main").style.display = "block";
+      loadStats();
+      loadScans();
+    })
+    .catch(() => {
+      document.getElementById("login-error").style.display = "block";
+      document.getElementById("login-error").textContent = "Invalid admin token. Try again.";
+    });
+}
+
+function loadStats() {
+  fetch(API + "/admin/qc/stats?token=" + encodeURIComponent(TOKEN))
+    .then(r => r.json())
+    .then(stats => {
+      const grid = document.getElementById("stats-grid");
+      const t1 = stats.scans_by_tier[1] || 0;
+      const t2 = stats.scans_by_tier[2] || 0;
+      const t3 = stats.scans_by_tier[3] || 0;
+      const avgAcc = stats.average_accuracy != null ? (stats.average_accuracy * 100).toFixed(1) + "%" : "N/A";
+      grid.innerHTML =
+        statCard("Total Scans", stats.total_scans, "") +
+        statCard("Tier 1 (Good)", t1, "tier-1") +
+        statCard("Tier 2 (Marginal)", t2, "tier-2") +
+        statCard("Tier 3 (Poor)", t3, "tier-3") +
+        statCard("Reviewed", stats.reviewed_count, "") +
+        statCard("Unreviewed", stats.unreviewed_count, stats.unreviewed_count > 0 ? "tier-3" : "") +
+        statCard("Avg Accuracy", avgAcc, "") +
+        statCard("CPT Flagged", stats.scans_with_cpt_flags, stats.scans_with_cpt_flags > 0 ? "tier-2" : "");
+    });
+}
+
+function statCard(label, value, cls) {
+  return '<div class="stat-card"><div class="label">' + label + '</div><div class="value ' + cls + '">' + value + '</div></div>';
+}
+
+function loadScans() {
+  const tier = document.getElementById("filter-tier").value;
+  const reviewed = document.getElementById("filter-reviewed").value;
+  let url = API + "/admin/qc/scans?token=" + encodeURIComponent(TOKEN) + "&limit=50";
+  if (tier) url += "&tier=" + tier;
+  if (reviewed) url += "&reviewed=" + reviewed;
+
+  document.getElementById("scans-container").innerHTML = '<div class="loading">Loading...</div>';
+
+  fetch(url)
+    .then(r => r.json())
+    .then(scans => {
+      if (!scans.length) {
+        document.getElementById("scans-container").innerHTML =
+          '<div class="empty-state"><h3>No scans found</h3><p>Adjust your filters or wait for new scans.</p></div>';
+        return;
+      }
+      let html = '<table><thead><tr><th>Date</th><th>Scan ID</th><th>Tier</th><th>CPT Flags</th><th>Reviewed</th><th>Accuracy</th></tr></thead><tbody>';
+      scans.forEach(s => {
+        const date = new Date(s.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        const shortId = s.scan_id.substring(0, 8) + "...";
+        const tierCls = "tier-badge tier-" + s.quality_tier;
+        const tierLabel = s.quality_tier === 1 ? "Good" : s.quality_tier === 2 ? "Marginal" : "Poor";
+        const flags = (s.cpt_flags && s.cpt_flags.length) ? s.cpt_flags.length + " flags" : "None";
+        const reviewCls = s.reviewed ? "reviewed-yes" : "reviewed-no";
+        const reviewLabel = s.reviewed ? "Yes" : "No";
+        const acc = s.accuracy_score != null ? (s.accuracy_score * 100).toFixed(0) + "%" : "-";
+        html += '<tr onclick="openDetail(\'' + s.scan_id + '\')">';
+        html += '<td>' + date + '</td>';
+        html += '<td style="font-family:monospace;font-size:12px;">' + shortId + '</td>';
+        html += '<td><span class="' + tierCls + '">' + tierLabel + '</span></td>';
+        html += '<td>' + flags + '</td>';
+        html += '<td class="' + reviewCls + '">' + reviewLabel + '</td>';
+        html += '<td>' + acc + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById("scans-container").innerHTML = html;
+    })
+    .catch(err => {
+      document.getElementById("scans-container").innerHTML = '<div class="empty-state"><h3>Error loading scans</h3><p>' + err.message + '</p></div>';
+    });
+}
+
+function openDetail(scanId) {
+  currentScanId = scanId;
+  document.getElementById("detail-modal").classList.add("active");
+  document.getElementById("detail-title").textContent = "Scan " + scanId.substring(0, 8) + "...";
+  document.getElementById("detail-meta").textContent = "Loading...";
+  document.getElementById("detail-image").innerHTML = '<div class="loading">Loading image...</div>';
+  document.getElementById("detail-results").innerHTML = "";
+  document.getElementById("detail-flags").innerHTML = "";
+  document.getElementById("detail-quality").innerHTML = "";
+  document.getElementById("detail-raw").textContent = "";
+  document.getElementById("review-status").textContent = "";
+
+  fetch(API + "/admin/qc/scan/" + scanId + "?token=" + encodeURIComponent(TOKEN))
+    .then(r => r.json())
+    .then(scan => {
+      const date = new Date(scan.created_at).toLocaleString();
+      const tierLabel = scan.quality_tier === 1 ? "Tier 1 (Good)" : scan.quality_tier === 2 ? "Tier 2 (Marginal)" : "Tier 3 (Poor)";
+      document.getElementById("detail-meta").textContent = date + " | " + tierLabel + " | " + scan.source;
+
+      // Image
+      if (scan.redacted_image_b64) {
+        const fmt = scan.image_format || "png";
+        document.getElementById("detail-image").innerHTML =
+          '<img src="data:image/' + fmt + ';base64,' + scan.redacted_image_b64 + '" alt="Redacted scan image">';
+      } else {
+        document.getElementById("detail-image").innerHTML = '<p style="color:#98A2B3;">No image saved for this scan.</p>';
+      }
+
+      // Results
+      if (scan.final_results && scan.final_results.items) {
+        let html = '<p style="font-size:13px;margin-bottom:8px;"><strong>Provider:</strong> ' + (scan.final_results.provider_name || "Unknown") + '</p>';
+        html += '<table class="items-table"><thead><tr><th>CPT</th><th>Test</th><th>Charge</th><th>Medicare</th><th>Valid</th></tr></thead><tbody>';
+        scan.final_results.items.forEach(item => {
+          const valid = item.cpt_validated ? '<span style="color:#065F46;">Yes</span>' : '<span style="color:#DC2626;">No</span>';
+          html += '<tr><td>' + (item.cpt_code || "-") + '</td><td>' + (item.test_description || "-") + '</td>';
+          html += '<td>' + (item.provider_charge != null ? "$" + item.provider_charge.toFixed(2) : "-") + '</td>';
+          html += '<td>' + (item.medicare_allowed != null ? "$" + item.medicare_allowed.toFixed(2) : "-") + '</td>';
+          html += '<td>' + valid + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        if (scan.final_results.total_provider != null) {
+          html += '<p style="font-size:13px;margin-top:8px;"><strong>Total Charged:</strong> $' + scan.final_results.total_provider.toFixed(2);
+          if (scan.final_results.total_medicare != null) html += ' | <strong>Medicare:</strong> $' + scan.final_results.total_medicare.toFixed(2);
+          html += '</p>';
+        }
+        document.getElementById("detail-results").innerHTML = html;
+      } else {
+        document.getElementById("detail-results").innerHTML = '<p style="color:#98A2B3;">No results data.</p>';
+      }
+
+      // CPT Flags
+      if (scan.cpt_flags && scan.cpt_flags.length) {
+        let html = "";
+        scan.cpt_flags.forEach(f => {
+          html += '<div class="flag-item"><strong>' + f.cpt_code + '</strong> - ' + (f.description || "") + '<br><span style="color:#991B1B;font-size:12px;">' + f.reason + '</span></div>';
+        });
+        document.getElementById("detail-flags").innerHTML = html;
+      } else {
+        document.getElementById("detail-flags").innerHTML = '<p style="color:#065F46;">No CPT flags - all codes validated.</p>';
+      }
+
+      // Quality scores
+      if (scan.quality_scores) {
+        const qs = scan.quality_scores;
+        let html = '<div style="font-size:13px;line-height:1.8;">';
+        html += '<strong>Blur Score:</strong> ' + (qs.blur_score || "N/A") + '<br>';
+        html += '<strong>Resolution:</strong> ' + (qs.resolution ? qs.resolution[0] + " x " + qs.resolution[1] : "N/A") + '<br>';
+        html += '<strong>Min Dimension:</strong> ' + (qs.min_dimension || "N/A") + 'px<br>';
+        html += '<strong>Landscape:</strong> ' + (qs.is_landscape ? "Yes" : "No") + '<br>';
+        if (qs.warnings && qs.warnings.length) {
+          html += '<strong>Warnings:</strong><ul style="margin:4px 0 0 16px;">';
+          qs.warnings.forEach(w => { html += '<li style="font-size:12px;color:#92400E;">' + w + '</li>'; });
+          html += '</ul>';
+        }
+        html += '</div>';
+        document.getElementById("detail-quality").innerHTML = html;
+      }
+
+      // Raw AI output
+      if (scan.raw_ai_output) {
+        document.getElementById("detail-raw").textContent = JSON.stringify(scan.raw_ai_output, null, 2);
+      }
+
+      // Review form state
+      if (scan.reviewed) {
+        document.getElementById("review-score").value = scan.accuracy_score || 1.0;
+        document.getElementById("review-notes").value = scan.review_notes || "";
+        document.getElementById("review-status").textContent = "Previously reviewed on " + new Date(scan.reviewed_at).toLocaleDateString();
+        document.getElementById("review-status").style.color = "#065F46";
+      } else {
+        document.getElementById("review-score").value = 1.0;
+        document.getElementById("review-notes").value = "";
+        document.getElementById("review-status").textContent = "";
+      }
+    })
+    .catch(err => {
+      document.getElementById("detail-meta").textContent = "Error: " + err.message;
+    });
+}
+
+function closeDetail() {
+  document.getElementById("detail-modal").classList.remove("active");
+  currentScanId = null;
+}
+
+function submitReview() {
+  if (!currentScanId) return;
+  const score = parseFloat(document.getElementById("review-score").value);
+  const notes = document.getElementById("review-notes").value;
+  if (isNaN(score) || score < 0 || score > 1) {
+    document.getElementById("review-status").textContent = "Score must be 0.0 to 1.0";
+    document.getElementById("review-status").style.color = "#DC2626";
+    return;
+  }
+  fetch(API + "/admin/qc/scan/" + currentScanId + "/review?token=" + encodeURIComponent(TOKEN), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accuracy_score: score, review_notes: notes })
+  })
+    .then(r => { if (!r.ok) throw new Error("Review failed"); return r.json(); })
+    .then(() => {
+      document.getElementById("review-status").textContent = "Reviewed successfully!";
+      document.getElementById("review-status").style.color = "#065F46";
+      loadScans();
+      loadStats();
+    })
+    .catch(err => {
+      document.getElementById("review-status").textContent = "Error: " + err.message;
+      document.getElementById("review-status").style.color = "#DC2626";
+    });
+}
+
+// Close modal on Escape key
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+// Close modal on backdrop click
+document.getElementById("detail-modal").addEventListener("click", e => { if (e.target === e.currentTarget) closeDetail(); });
+</script>
+</body>
+</html>
