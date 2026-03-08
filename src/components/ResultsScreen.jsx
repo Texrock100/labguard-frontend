@@ -95,7 +95,7 @@ function buildResultsHTML(r) {
 
 export default function ResultsScreen({ results, onReset }) {
   const [expandedLab, setExpandedLab] = useState(null);
-  const [expandedAlert, setExpandedAlert] = useState(null);
+  // expandedAlert state removed — frequency limits now shown inline only
   const [showShare, setShowShare] = useState(false);
   const [shareEmail, setShareEmail] = useState("");
   const [shareSending, setShareSending] = useState(false);
@@ -231,7 +231,7 @@ export default function ResultsScreen({ results, onReset }) {
           <div className="coverage-banner-text">
             <strong>Medicare Frequency Limits</strong>
             <span>
-              {freqAlerts.length} test{freqAlerts.length > 1 ? "s" : ""} ha{freqAlerts.length > 1 ? "ve" : "s"} Medicare frequency limits. See details below.
+              {freqAlerts.length} test{freqAlerts.length > 1 ? "s" : ""} ha{freqAlerts.length > 1 ? "ve" : "s"} Medicare frequency limits. Check each test for details.
             </span>
           </div>
         </div>
@@ -297,55 +297,20 @@ export default function ResultsScreen({ results, onReset }) {
         })}
       </div>
 
-      {/* Frequency Limits Detail Section */}
+      {/* Frequency Limits Note */}
       {freqAlerts.length > 0 && (
-        <div className="alerts-card">
-          <h3>Medicare Frequency Limits</h3>
-          <p className="alerts-subtitle">
-            Tests with Medicare frequency limits. If you've had these tests recently, Medicare may not cover them again within the limit period.
-          </p>
-
-          {freqAlerts.map((alert, i) => (
-            <div
-              className={`alert-row alert-info ${expandedAlert === i ? "expanded" : ""}`}
-              key={i}
-              onClick={() => setExpandedAlert(expandedAlert === i ? null : i)}
-            >
-              <div className="alert-main">
-                <div className="alert-left">
-                  <span className="alert-icon">{"\u2139\uFE0F"}</span>
-                  <div>
-                    <div className="alert-cpt">{alert.cpt_code}</div>
-                    <div className="alert-title">
-                      {alert.frequency_limit.limit}x per {alert.frequency_limit.period}
-                    </div>
-                  </div>
-                </div>
-                {alert.denial_rate != null && (
-                  <div className="alert-rate">
-                    <div className="alert-rate-num">{Math.round(alert.denial_rate)}%</div>
-                    <div className="alert-rate-label">denial rate</div>
-                  </div>
-                )}
-              </div>
-
-              {expandedAlert === i && (
-                <div className="alert-detail">
-                  <p>
-                    Medicare limits this test to {alert.frequency_limit.limit}x per {alert.frequency_limit.period}.
-                    If you've had this test recently, that may explain a denial or higher out-of-pocket cost.
-                    Check with your doctor about timing for your next test.
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Coverage disclaimer */}
-          {r.coverage_disclaimer && (
-            <p className="coverage-disclaimer">{r.coverage_disclaimer}</p>
-          )}
+        <div className="freq-doctor-note">
+          <span className="freq-doctor-icon">{"\u2139\uFE0F"}</span>
+          <div>
+            <strong>{freqAlerts.length} test{freqAlerts.length > 1 ? "s have" : " has"} Medicare frequency limits.</strong>{" "}
+            If you've had any of these tests recently, Medicare may not cover them again within the limit period. Check with your doctor about the timing of your next test.
+          </div>
         </div>
+      )}
+
+      {/* Coverage disclaimer */}
+      {r.coverage_disclaimer && (
+        <p className="coverage-disclaimer">{r.coverage_disclaimer}</p>
       )}
 
       {/* Nearby Labs */}
