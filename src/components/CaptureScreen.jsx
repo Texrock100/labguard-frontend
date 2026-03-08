@@ -112,6 +112,17 @@ export default function CaptureScreen({ onSubmit, state, onStateChange }) {
         </div>
       )}
 
+      {/* Photo tips for better scan results */}
+      <div className="photo-tips">
+        <p className="photo-tips-title">{"💡"} Tips for Best Results</p>
+        <ul className="photo-tips-list">
+          <li><strong>Landscape mode</strong> {"—"} turn your phone sideways</li>
+          <li><strong>Get close</strong> {"—"} make sure all numbers are readable</li>
+          <li><strong>Good lighting</strong> {"—"} avoid shadows and glare</li>
+          <li><strong>Full page</strong> {"—"} include the entire bill in frame</li>
+        </ul>
+      </div>
+
       {/* Big analyze button when file selected */}
       {preview && (
         <button className="btn btn-primary" onClick={() => onSubmit(file)}>
