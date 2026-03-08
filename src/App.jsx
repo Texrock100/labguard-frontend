@@ -135,7 +135,25 @@ function App() {
   };
 
   if (!hasAccess) {
-    return <AccessGate onAccessGranted={handleAccessGranted} />;
+    return (
+      <div className="app">
+        <header className="app-header">
+          <div className="header-content">
+            <h1 className="app-title">
+              <span className="title-blood">Gouge</span>
+              <span className="title-war">Stop</span>
+            </h1>
+            <p className="app-tagline">Know what Medicare pays. Stop overpaying.</p>
+          </div>
+        </header>
+        <nav className="header-nav">
+          <a href="/blog" className="nav-link">Blog</a>
+          <a href="/our-story" className="nav-link">Our Story</a>
+          <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
+        </nav>
+        <AccessGate onAccessGranted={handleAccessGranted} />
+      </div>
+    );
   }
 
   return (
@@ -148,12 +166,12 @@ function App() {
           </h1>
           <p className="app-tagline">Know what Medicare pays. Stop overpaying.</p>
         </div>
-              <nav className="header-nav">
-            <a href="/blog" className="nav-link">Blog</a>
-            <a href="/our-story" className="nav-link">Our Story</a>
-            <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
-          </nav>
-        </header>
+      </header>
+      <nav className="header-nav">
+        <a href="/blog" className="nav-link">Blog</a>
+        <a href="/our-story" className="nav-link">Our Story</a>
+        <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
+      </nav>
 
       <main className="app-main">
         {screen === "capture" && (
