@@ -25,7 +25,16 @@ function buildResultsHTML(r) {
   const docLabel = { bill: "Bill", order: "Order", abn: "ABN" }[r.document_type] || "Document";
   const hasBillData = r.document_type === "bill" || r.document_type === "abn";
 
-  let html = `<h2 style="color:#1B3A5C;font-size:20px;margin-bottom:12px;">Your GougeStop Results</h2>`;
+  // Quality warning banner (shown for Tier 2 marginal images)
+  let qualityBanner = "";
+  if (r.quality_warning) {
+    qualityBanner = `<div style="background:#FFF3CD;border:1px solid #FFECB5;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;">
+      <span style="font-size:20px;line-height:1;">\u26A0\uFE0F</span>
+      <div style="color:#664D03;font-size:13px;line-height:1.5;">${r.quality_warning}</div>
+    </div>`;
+  }
+
+    let html = `${qualityBanner}<h2 style="color:#1B3A5C;font-size:20px;margin-bottom:12px;">Your GougeStop Results</h2>`;
 
   if (r.provider_name || r.date_of_service) {
     html += `<p style="color:#6c757d;font-size:14px;margin-bottom:16px;">`;
