@@ -108,6 +108,42 @@ body {
   color: #ffffff;
 }
 
+
+/* ===== PHOTO TIPS ===== */
+.photo-tips {
+  background: #F0F7FF;
+  border: 1px solid #D0E3F7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.photo-tips-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1B3A5C;
+  margin: 0 0 8px 0;
+}
+.photo-tips-list {
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+.photo-tips-list li {
+  font-size: 13px;
+  color: #4A5568;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+.photo-tips-list li::before {
+  content: "\2713";
+  color: #38A169;
+  font-weight: bold;
+  margin-right: 8px;
+}
+.photo-tips-list li strong {
+  color: #1B3A5C;
+}
+
 /* ===== FOOTER LINKS ===== */
 .footer-links {
   display: flex;
