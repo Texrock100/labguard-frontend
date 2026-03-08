@@ -318,7 +318,7 @@ export default function ResultsScreen({ results, onReset }) {
         <div className="labs-card">
           <h3>Nearby Labs &mdash; Estimated Total</h3>
           <p className="labs-subtitle">
-            Tap a lab to see per-test pricing. Lab pricing based on 2023 Medicare claims data. Actual charges may vary and available providers may have changed since then.
+            Tap a lab to see per-test pricing.
           </p>
           {r.nearby_labs.map((lab, i) => (
             <div
@@ -361,7 +361,7 @@ export default function ResultsScreen({ results, onReset }) {
       )}
 
       {/* Disclaimer */}
-      <p className="disclaimer">{r.data_disclaimer}</p>
+      <p className="disclaimer">Lab pricing based on 2023 Medicare claims data (most recent available). Actual current charges and providers in area may vary as a result. GougeStop is working to supplement this data with pricing from providers collected by our users and that will be made available as soon as there is enough to add value.</p>
 
       {/* Action Buttons */}
       <div className="results-actions">
