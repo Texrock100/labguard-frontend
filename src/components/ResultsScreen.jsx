@@ -403,6 +403,10 @@ export default function ResultsScreen({ results, onReset }) {
         <button className="btn btn-primary" onClick={() => setShowShare(true)}>
           Email These Results
         </button>
+        <button className="download-pdf-btn" onClick={() => window.print()}>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/></svg>
+          Download PDF
+        </button>
         <button className="btn btn-secondary" onClick={onReset}>
           Scan Another Document
         </button>

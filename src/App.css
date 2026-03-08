@@ -1323,9 +1323,105 @@ body {
   border-top: 1px solid var(--gray-100);
 }
 
+/* ===== DOWNLOAD PDF BUTTON ===== */
+.download-pdf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 24px;
+  background: #1B3A5C;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 8px;
+}
+
+.download-pdf-btn:hover {
+  background: #2C5F8A;
+  transform: translateY(-1px);
+}
+
+.download-pdf-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 400px) {
   .app-main { padding: 10px; }
   .summary-totals { grid-template-columns: 1fr; }
   .item-prices { flex-direction: column; gap: 4px; }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  /* Hide navigation, header, footer, and action buttons */
+  .app-header,
+  .header-nav,
+  .app-footer,
+  .download-pdf-btn,
+  .scans-remaining {
+    display: none !important;
+  }
+
+  /* Remove background colors for cleaner print */
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .app {
+    background: white !important;
+  }
+
+  .app-main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Keep colored elements visible */
+  .summary-totals .total-card,
+  .freq-alert,
+  .freq-limit-badge,
+  .item-prices .price-group {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide all action buttons in print */
+  .results-actions {
+    display: none !important;
+  }
+
+  /* Show a GougeStop watermark at top */
+  .results-container::before {
+    content: "GougeStop — gougestop.com";
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: #1B3A5C;
+    font-weight: 700;
+    padding: 12px 0;
+    border-bottom: 2px solid #1B3A5C;
+    margin-bottom: 16px;
+  }
+
+  /* Avoid page breaks inside cards */
+  .results-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .nearby-lab-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
