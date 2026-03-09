@@ -153,8 +153,8 @@
     <!-- Review Form -->
     <div class="review-form" id="review-form">
       <h3 style="font-size:15px;margin-bottom:12px;">Review This Scan</h3>
-      <label>Accuracy Score (0.0 = wrong, 1.0 = perfect)</label>
-      <input type="number" id="review-score" min="0" max="1" step="0.1" value="1.0">
+      <label>Accuracy % (0 = completely wrong, 100 = perfect)</label>
+      <input type="number" id="review-score" min="0" max="100" step="5" placeholder="0-100">
       <label>Notes</label>
       <textarea id="review-notes" placeholder="Optional notes about what was wrong or right..."></textarea>
       <button onclick="submitReview()">Mark as Reviewed</button>
@@ -193,7 +193,7 @@ function loadStats() {
       const t1 = stats.scans_by_tier[1] || 0;
       const t2 = stats.scans_by_tier[2] || 0;
       const t3 = stats.scans_by_tier[3] || 0;
-      const avgAcc = stats.average_accuracy != null ? (stats.average_accuracy * 100).toFixed(1) + "%" : "N/A";
+      const avgAcc = stats.average_accuracy != null ? stats.average_accuracy.toFixed(0) + "%" : "N/A";
       grid.innerHTML =
         statCard("Total Scans", stats.total_scans, "") +
         statCard("Tier 1 (Good)", t1, "tier-1") +
@@ -236,7 +236,7 @@ function loadScans() {
         const flags = (s.cpt_flags && s.cpt_flags.length) ? s.cpt_flags.length + " flags" : "None";
         const reviewCls = s.reviewed ? "reviewed-yes" : "reviewed-no";
         const reviewLabel = s.reviewed ? "Yes" : "No";
-        const acc = s.accuracy_score != null ? (s.accuracy_score * 100).toFixed(0) + "%" : "-";
+        const acc = s.accuracy_score != null ? s.accuracy_score + "%" : "-";
         html += '<tr onclick="openDetail(\'' + s.scan_id + '\')">';
         html += '<td>' + date + '</td>';
         html += '<td style="font-family:monospace;font-size:12px;">' + shortId + '</td>';
@@ -339,7 +339,7 @@ function openDetail(scanId) {
 
       // Review form state
       if (scan.reviewed) {
-        document.getElementById("review-score").value = scan.accuracy_score || 1.0;
+        document.getElementById("review-score").value = scan.accuracy_score || "";
         document.getElementById("review-notes").value = scan.review_notes || "";
         document.getElementById("review-status").textContent = "Previously reviewed on " + new Date(scan.reviewed_at).toLocaleDateString();
         document.getElementById("review-status").style.color = "#065F46";
