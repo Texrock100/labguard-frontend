@@ -1,6 +1,8 @@
 {
   "routes": [
     { "src": "^/app$", "dest": "/index.html" },
+    { "src": "^/install$", "dest": "/install.html" },
+    { "src": "^/admin$", "dest": "/admin.html" },
     { "src": "^/our-story$", "dest": "/our-story.html" },
     { "src": "^/blog/abn-trap$", "dest": "/blog/abn-trap.html" },
     { "src": "^/blog$", "dest": "/blog.html" },
