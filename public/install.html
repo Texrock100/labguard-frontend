@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Install GougeStop on Your Phone | GougeStop</title>
+  <meta name="description" content="Add GougeStop to your phone's home screen for quick access. Works on iPhone and Android â no app store needed.">
+  <meta property="og:title" content="Install GougeStop on Your Phone">
+  <meta property="og:description" content="Add GougeStop to your phone's home screen for instant access to Medicare lab pricing. No app store needed.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gougestop.com/install">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #f8f9fa;
+      color: #495057;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.7;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    .header-brand {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ff6b6b;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .header-brand:hover { opacity: 0.7; }
+
+    .header-tagline {
+      font-size: 0.95rem;
+      opacity: 0.7;
+      margin-top: 0.3rem;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .back-link:hover { opacity: 1; text-decoration: underline; }
+
+    .site-nav {
+      background: #34495e;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .site-nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+
+    .site-nav a:hover { opacity: 1; text-decoration: underline; }
+
+    .site-nav .nav-cta {
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+
+    .site-nav .nav-current {
+      opacity: 1;
+      font-weight: 600;
+      border-bottom: 2px solid #ff6b6b;
+      padding-bottom: 2px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .page-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    /* Platform tabs */
+    .platform-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .platform-tab {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #888;
+      background: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .platform-tab.active {
+      color: #2c3e50;
+      background: white;
+      border-bottom: 3px solid #ff6b6b;
+    }
+
+    .platform-tab:hover:not(.active) {
+      color: #555;
+      background: #e8e8e8;
+    }
+
+    .platform-content {
+      background: white;
+      border-radius: 0 0 12px 12px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 2rem;
+    }
+
+    .platform-section { display: none; }
+    .platform-section.active { display: block; }
+
+    /* Steps */
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: #ff6b6b;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .step-content h3 {
+      font-size: 1rem;
+      color: #2c3e50;
+      margin-bottom: 0.3rem;
+    }
+
+    .step-content p {
+      font-size: 0.95rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .icon-hint {
+      display: inline-block;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    /* Why install section */
+    .why-install {
+      background: #eef6ff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .why-install h2 {
+      font-size: 1.2rem;
+      color: #2c3e50;
+      margin-bottom: 0.8rem;
+    }
+
+    .why-install p {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 0.6rem;
+    }
+
+    .why-install p:last-child { margin-bottom: 0; }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .cta-section p {
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: #ff6b6b;
+      color: white;
+      text-decoration: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s, box-shadow 0.1s;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-nav a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+    }
+
+    .footer-nav a:hover { opacity: 1; text-decoration: underline; }
+
+    .footer-nav .nav-cta { color: #ff6b6b; }
+
+    footer div { opacity: 0.6; font-size: 0.8rem; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      .page-container { padding: 1.5rem 1rem 2rem; }
+      .platform-content { padding: 1.5rem 1rem; }
+      .site-nav { gap: 1rem; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <a href="/" class="header-brand">GougeStop</a>
+    <p class="header-tagline">Know what Medicare pays. Stop overpaying.</p>
+  </header>
+  <nav class="site-nav">
+    <a href="/blog">Blog</a>
+    <a href="/our-story">Our Story</a>
+    <a href="/install" class="nav-current">Install on Phone</a>
+    <a href="/app" class="nav-cta">Open GougeStop</a>
+  </nav>
+
+  <main>
+    <div class="page-container">
+      <h1>Install GougeStop on Your Phone</h1>
+      <p class="intro">GougeStop works like an app right from your phone's home screen. No app store needed &mdash; just follow the steps below for your phone type.</p>
+
+      <!-- Why install -->
+      <div class="why-install">
+        <h2>Why add it to your home screen?</h2>
+        <p><strong>One-tap access.</strong> Open GougeStop instantly &mdash; no typing a web address or searching through browser tabs.</p>
+        <p><strong>Use it in the moment.</strong> When you're handed an ABN or lab bill at a doctor's office, you want the app ready to go &mdash; not buried in a browser.</p>
+        <p><strong>It works like a regular app.</strong> Full screen, fast loading, and it even works offline for pages you've already visited.</p>
+      </div>
+
+      <!-- Platform tabs -->
+      <div class="platform-tabs">
+        <button class="platform-tab active" onclick="showPlatform('iphone')">iPhone / iPad</button>
+        <button class="platform-tab" onclick="showPlatform('android')">Android</button>
+      </div>
+
+      <!-- iPhone instructions -->
+      <div class="platform-content">
+        <div id="iphone-section" class="platform-section active">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Open GougeStop in Safari</h3>
+              <p>Go to <strong>gougestop.com</strong> using the <strong>Safari</strong> browser. This won't work from Chrome or other browsers on iPhone &mdash; it has to be Safari.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Tap the Share button</h3>
+              <p>Tap the <span class="icon-hint">&#9769;</span> share icon at the bottom center of Safari. It's the square with an arrow pointing up.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Scroll down and tap "Add to Home Screen"</h3>
+              <p>In the share menu, scroll down until you see <strong>"Add to Home Screen."</strong> Tap it.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Tap "Add"</h3>
+              <p>You'll see a preview with the GougeStop icon and name. Tap <strong>"Add"</strong> in the top right corner. That's it &mdash; GougeStop is now on your home screen.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Android instructions -->
+        <div id="android-section" class="platform-section">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Open GougeStop in Chrome</h3>
+              <p>Go to <strong>gougestop.com</strong> using <strong>Google Chrome</strong>. Most Android phones have Chrome pre-installed.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Tap the three-dot menu</h3>
+              <p>Tap the <span class="icon-hint">&#8942;</span> three dots in the top right corner of Chrome.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Tap "Install app" or "Add to Home screen"</h3>
+              <p>Look for <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong> in the menu. The wording depends on your phone, but it does the same thing.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Confirm the installation</h3>
+              <p>Tap <strong>"Install"</strong> or <strong>"Add"</strong> when prompted. GougeStop will appear on your home screen just like any other app.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <p>Ready to try it?</p>
+        <a href="/app" class="cta-btn">Open GougeStop Now</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <nav class="footer-nav">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/our-story">Our Story</a>
+      <a href="/install">Install on Phone</a>
+      <a href="/app" class="nav-cta">Open GougeStop</a>
+    </nav>
+    <div>GougeStop is for informational purposes only. Not medical or financial advice.</div>
+  </footer>
+
+  <script>
+    function showPlatform(platform) {
+      // Toggle tabs
+      document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.platform-section').forEach(sec => sec.classList.remove('active'));
+
+      if (platform === 'iphone') {
+        document.querySelectorAll('.platform-tab')[0].classList.add('active');
+        document.getElementById('iphone-section').classList.add('active');
+      } else {
+        document.querySelectorAll('.platform-tab')[1].classList.add('active');
+        document.getElementById('android-section').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
