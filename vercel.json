@@ -1,11 +1,36 @@
 {
   "routes": [
-    { "src": "^/app$", "dest": "/index.html" },
-    { "src": "^/install$", "dest": "/install.html" },
-    { "src": "^/admin$", "dest": "/admin.html" },
-    { "src": "^/our-story$", "dest": "/our-story.html" },
-    { "src": "^/blog/abn-trap$", "dest": "/blog/abn-trap.html" },
-    { "src": "^/blog$", "dest": "/blog.html" },
-    { "src": "^/$", "dest": "/how-it-works.html" }
+    {
+      "src": "^/app$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/install$",
+      "dest": "/install.html"
+    },
+    {
+      "src": "^/admin$",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "^/our-story$",
+      "dest": "/our-story.html"
+    },
+    {
+      "src": "^/blog/abn-trap$",
+      "dest": "/blog/abn-trap.html"
+    },
+    {
+      "src": "^/blog/5-things-before-you-pay-a-lab-bill$",
+      "dest": "/blog/5-things-before-you-pay-a-lab-bill.html"
+    },
+    {
+      "src": "^/blog$",
+      "dest": "/blog.html"
+    },
+    {
+      "src": "^/$",
+      "dest": "/how-it-works.html"
+    }
   ]
 }
