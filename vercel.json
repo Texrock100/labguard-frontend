@@ -33,6 +33,10 @@
       "dest": "/coverage/index.html"
     },
     {
+      "src": "^/rate-lookup$",
+      "dest": "/rate-lookup.html"
+    },
+    {
       "src": "^/$",
       "dest": "/how-it-works.html"
     }

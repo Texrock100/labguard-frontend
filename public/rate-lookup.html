@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Look up what Medicare pays for any lab test. Compare Medicare reimbursement rates to typical lab charges and see the real markup. Search by CPT code or test name. Free." />
+  <meta property="og:title" content="Lab Test Cost Lookup | Medicare Reimbursement Rates | GougeStop" />
+  <meta property="og:description" content="Look up what Medicare pays for any lab test. Compare Medicare reimbursement rates to typical lab charges and see the real markup. Free tool from GougeStop." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gougestop.com/rate-lookup" />
+  <meta property="og:image" content="https://gougestop.com/icon-512.png" />
+  <meta property="og:site_name" content="GougeStop" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Lab Test Cost Lookup | Medicare Reimbursement Rates" />
+  <meta name="twitter:description" content="Look up what Medicare pays for any lab test. Compare rates to what labs typically charge. Free." />
+  <meta name="twitter:image" content="https://gougestop.com/icon-512.png" />
+  <link rel="canonical" href="https://gougestop.com/rate-lookup" />
+  <meta name="theme-color" content="#1B3A5C" />
+  <title>Lab Test Cost Lookup | Medicare Reimbursement Rates | GougeStop</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #212529;
+      background: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      background: #1B3A5C;
+      color: #fff;
+      padding: 20px 24px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-gouge { color: #fff; }
+    .logo-stop { color: #FF6B6B; }
+
+    .header-tagline {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    /* ===== NAV BAR ===== */
+    .site-nav {
+      background: #152e4a;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 10px 20px;
+      flex-wrap: wrap;
+    }
+    .site-nav a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .site-nav a:hover { color: #FF6B6B; }
+    .site-nav .nav-cta { color: #FF6B6B; }
+
+    /* ===== MAIN CONTENT ===== */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 48px 0 32px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      color: #1B3A5C;
+      line-height: 1.3;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #495057;
+      line-height: 1.7;
+    }
+
+    /* ===== SEARCH SECTION ===== */
+    .search-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin: 32px 0;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #FF6B6B;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #adb5bd;
+    }
+
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #e9ecef;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .autocomplete-dropdown.active {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f1f1;
+      transition: background 0.15s;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover {
+      background: #f8f9fa;
+    }
+
+    .autocomplete-item.highlighted {
+      background: #eff4f8;
+    }
+
+    .autocomplete-item-name {
+      font-weight: 600;
+      color: #1B3A5C;
+      font-size: 15px;
+    }
+
+    .autocomplete-item-code {
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 2px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .lookup-btn {
+      background: #FF6B6B;
+      color: #fff;
+      border: none;
+      padding: 16px 48px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+    }
+
+    .lookup-btn:hover {
+      background: #e55a5a;
+      transform: translateY(-1px);
+    }
+
+    .lookup-btn:active {
+      transform: translateY(0);
+    }
+
+    .clear-btn {
+      background: #e9ecef;
+      color: #495057;
+      border: none;
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: #dee2e6;
+    }
+
+    /* ===== RESULTS SECTION ===== */
+    .results-section {
+      margin: 32px 0;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .result-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 5px solid #FF6B6B;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      gap: 16px;
+    }
+
+    .result-title {
+      flex: 1;
+    }
+
+    .result-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1B3A5C;
+      margin-bottom: 4px;
+    }
+
+    .result-cpt {
+      font-size: 14px;
+      color: #6c757d;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+    }
+
+    .result-description {
+      font-size: 15px;
+      color: #495057;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .result-rates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .rate-box {
+      padding: 16px;
+      border-radius: 10px;
+      background: #f8f9fa;
+    }
+
+    .rate-label {
+      font-size: 13px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .rate-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .rate-value.medicare {
+      color: #28a745;
+    }
+
+    .rate-value.typical {
+      color: #495057;
+    }
+
+    .rate-subtext {
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 4px;
+    }
+
+    .markup-box {
+      padding: 16px;
+      border-radius: 10px;
+      background: #fff5f5;
+      border: 1px solid #ffe0e0;
+      grid-column: 1 / -1;
+    }
+
+    .markup-label {
+      font-size: 13px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .markup-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #dc3545;
+      margin: 0;
+    }
+
+    .no-result {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-left: 5px solid #adb5bd;
+      text-align: center;
+      color: #6c757d;
+    }
+
+    .no-result-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      color: #6c757d;
+      padding: 40px 20px;
+      font-size: 16px;
+    }
+
+    /* ===== HELPER TEXT ===== */
+    .helper-text {
+      font-size: 14px;
+      color: #6c757d;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      background: #1B3A5C;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 13px;
+      margin-top: 40px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .site-footer a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+    }
+
+    .footer-also {
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    .footer-also a {
+      color: #FF6B6B;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer-also a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .search-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .lookup-btn, .clear-btn {
+        width: 100%;
+      }
+
+      .result-rates {
+        grid-template-columns: 1fr;
+      }
+
+      .markup-box {
+        grid-column: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 22px;
+      }
+
+      .search-section {
+        padding: 24px 16px;
+      }
+
+      .result-card {
+        padding: 20px;
+      }
+
+      .result-name {
+        font-size: 18px;
+      }
+
+      .rate-value {
+        font-size: 24px;
+      }
+
+      .markup-value {
+        font-size: 24px;
+      }
+
+      .site-nav {
+        gap: 16px;
+        padding: 8px 12px;
+      }
+
+      .site-nav a {
+        font-size: 13px;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Medicare Lab Test Rate Lookup",
+  "url": "https://gougestop.com/rate-lookup",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "Look up Medicare reimbursement rates for lab tests by CPT code or test name. Compare Medicare rates to typical lab charges to understand markup percentages.",
+  "featureList": ["Medicare rate lookup", "CPT code search", "Lab test comparison", "Markup calculation"]
+}
+</script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Medicare reimbursement rate for a lab test?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Medicare reimbursement rate (Medicare Clinical Lab Fee Schedule rate) is the maximum amount Medicare will pay a lab for a specific test. It's set by CMS and updated annually. For example, Medicare pays $14.35 for a Comprehensive Metabolic Panel (CPT 80053), but many labs charge patients $45-$237 for the same test."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I use the lab test rate lookup tool?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Enter up to 4 tests to look up. You can search by CPT code (like '80053') or by test name (like 'cholesterol' or 'CBC'). The tool will show you the Medicare reimbursement rate, typical lab charges, and the markup percentage. Empty fields are ignored, so you can search for 1-4 tests at once."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do labs charge so much more than Medicare rates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Labs charge different amounts to different patients based on insurance, location, and their own pricing models. Uninsured patients and those paying out-of-pocket often face the highest markups. Labs may charge 200-400% above Medicare rates to cover operating costs, overhead, and profit. This is why it's important to know the Medicare rate so you can push back on unfair charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Medicare reimbursement rates to negotiate my lab bill?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If you've received a lab bill with charges well above the Medicare rate shown in this tool, you can use that information when negotiating with the lab. Contact the lab's billing department and ask for a discount, referencing the Medicare rate as a benchmark for fair pricing. Many labs will negotiate, especially if you're paying out of pocket."
+      }
+    }
+  ]
+}
+</script>
+
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-gouge">Gouge</span><span class="logo-stop">Stop</span>
+    </div>
+    <div class="header-tagline">Know what Medicare pays. Stop overpaying.</div>
+  </header>
+
+  <nav class="site-nav">
+    <a href="/blog">Blog</a>
+    <a href="/our-story">Our Story</a>
+    <a href="/install">Install on Phone</a>
+    <a href="/coverage">Coverage Lookup</a>
+    <a href="/rate-lookup">Rate Lookup</a>
+    <a href="/app" class="nav-cta">Open GougeStop</a>
+  </nav>
+
+  <div class="content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>What Should Your Lab Test Cost?</h1>
+      <p>Look up Medicare reimbursement rates and see how much labs are marking up your tests.</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-grid">
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="CPT code or test name"
+            data-index="0"
+            autocomplete="off"
+          />
+          <div class="autocomplete-dropdown" data-index="0"></div>
+        </div>
+
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="CPT code or test name"
+            data-index="1"
+            autocomplete="off"
+          />
+          <div class="autocomplete-dropdown" data-index="1"></div>
+        </div>
+
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="CPT code or test name"
+            data-index="2"
+            autocomplete="off"
+          />
+          <div class="autocomplete-dropdown" data-index="2"></div>
+        </div>
+
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="CPT code or test name"
+            data-index="3"
+            autocomplete="off"
+          />
+          <div class="autocomplete-dropdown" data-index="3"></div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="lookup-btn" id="lookupBtn">Look Up Rates</button>
+        <button class="clear-btn" id="clearBtn">Clear All</button>
+      </div>
+
+      <p class="helper-text">Search by CPT code (e.g. 80053) or test name (e.g. cholesterol). Leave fields blank to skip them.</p>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection" style="display: none;">
+      <div class="results-grid" id="resultsGrid"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      Enter tests above and click "Look Up Rates" to see Medicare reimbursement rates.
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/our-story">Our Story</a>
+      <a href="/install">Install on Phone</a>
+      <a href="/coverage">Coverage Lookup</a>
+      <a href="/app" style="color: #FF6B6B; font-weight: 600;">Open GougeStop</a>
+    </div>
+    <p>&copy; 2026 GougeStop. All rights reserved. For informational purposes only. Not medical or financial advice.</p>
+    <p class="footer-also">Also from GougeStop: <a href="https://medcareprecheck.com" target="_blank" rel="noopener">MedcarePrecheck</a> &#8212; Know if Medicare will cover your lab tests before you go.</p>
+  </footer>
+
+  <script>
+// Lab Test Database with comprehensive data and synonyms
+const labTestDatabase = [
+  // Chemistry/Metabolic
+  { cpt: "80048", name: "Basic Metabolic Panel (BMP)", medicareRate: 9.63, labMin: 35, labMax: 148, description: "Tests kidney function, electrolytes, glucose, and protein levels", synonyms: ["basic metabolic panel", "bmp", "metabolic panel"] },
+  { cpt: "80050", name: "General Health Panel", medicareRate: 32.41, labMin: 150, labMax: 550, description: "Comprehensive general health screening", synonyms: ["general health panel", "wellness panel", "health panel"] },
+  { cpt: "80053", name: "Comprehensive Metabolic Panel (CMP)", medicareRate: 14.35, labMin: 45, labMax: 237, description: "Tests liver and kidney function, glucose, electrolytes, and proteins", synonyms: ["comprehensive metabolic panel", "cmp", "metabolic panel", "metabolic screen"] },
+  { cpt: "80061", name: "Lipid Panel", medicareRate: 12.98, labMin: 50, labMax: 177, description: "Measures cholesterol and triglyceride levels", synonyms: ["lipid panel", "cholesterol panel", "lipid profile", "fasting lipid panel", "cholesterol test", "hdl", "ldl", "triglycerides", "cholesterol"] },
+  { cpt: "80076", name: "Hepatic Function Panel (Liver)", medicareRate: 11.67, labMin: 40, labMax: 160, description: "Tests liver function and liver enzyme levels", synonyms: ["hepatic function panel", "liver panel", "liver function panel", "liver function test", "lfts", "liver enzymes"] },
+  { cpt: "82247", name: "Bilirubin Total", medicareRate: 6.27, labMin: 20, labMax: 75, description: "Measures bilirubin levels in blood", synonyms: ["bilirubin total", "bilirubin", "total bilirubin", "tbili"] },
+  { cpt: "82306", name: "Vitamin D", medicareRate: 16.96, labMin: 65, labMax: 298, description: "Measures vitamin D levels for bone and immune health", synonyms: ["vitamin d", "vitamin d 25-oh", "vitamin d level", "25-hydroxyvitamin d", "25-oh vitamin d"] },
+  { cpt: "82465", name: "Cholesterol Total", medicareRate: 5.01, labMin: 15, labMax: 60, description: "Measures total cholesterol level", synonyms: ["cholesterol total", "total cholesterol", "cholesterol", "serum cholesterol"] },
+  { cpt: "82550", name: "Creatine Kinase (CK)", medicareRate: 8.14, labMin: 25, labMax: 95, description: "Measures muscle and heart enzyme levels", synonyms: ["creatine kinase", "ck", "ck-mb", "creatine kinase total", "muscle enzyme"] },
+  { cpt: "82607", name: "Vitamin B12", medicareRate: 15.87, labMin: 50, labMax: 200, description: "Measures vitamin B12 levels for neurological health", synonyms: ["vitamin b12", "b12", "cobalamin", "cyanocobalamin", "b12 level"] },
+  { cpt: "82728", name: "Ferritin", medicareRate: 14.28, labMin: 45, labMax: 175, description: "Measures iron storage levels in the body", synonyms: ["ferritin", "ferritin level", "iron storage", "iron stores"] },
+  { cpt: "82746", name: "Folic Acid (Folate)", medicareRate: 14.22, labMin: 45, labMax: 170, description: "Measures folic acid levels", synonyms: ["folic acid", "folate", "vitamin b9", "folate level"] },
+  { cpt: "82947", name: "Glucose", medicareRate: 4.52, labMin: 15, labMax: 55, description: "Measures blood sugar level", synonyms: ["glucose", "blood sugar", "blood glucose", "fasting glucose", "serum glucose"] },
+  { cpt: "83036", name: "Hemoglobin A1c", medicareRate: 12.11, labMin: 40, labMax: 130, description: "Measures average blood sugar over 3 months for diabetes monitoring", synonyms: ["hemoglobin a1c", "a1c", "hba1c", "glycated hemoglobin", "diabetes test", "blood sugar test"] },
+  { cpt: "83540", name: "Iron, Total", medicareRate: 8.14, labMin: 25, labMax: 90, description: "Measures total iron level in blood", synonyms: ["iron total", "total iron", "serum iron", "iron level"] },
+  { cpt: "83550", name: "Iron Binding Capacity (TIBC)", medicareRate: 9.22, labMin: 30, labMax: 100, description: "Measures iron transport protein capacity", synonyms: ["iron binding capacity", "tibc", "total iron binding capacity", "transferrin"] },
+  { cpt: "83615", name: "Lactate Dehydrogenase (LDH)", medicareRate: 7.33, labMin: 25, labMax: 85, description: "Measures enzyme that indicates tissue damage", synonyms: ["lactate dehydrogenase", "ldh", "ld", "lactic acid dehydrogenase"] },
+  { cpt: "83735", name: "Magnesium", medicareRate: 6.90, labMin: 20, labMax: 80, description: "Measures magnesium level for muscle and nerve function", synonyms: ["magnesium", "magnesium level", "serum magnesium", "mag"] },
+  { cpt: "84075", name: "Alkaline Phosphatase", medicareRate: 6.27, labMin: 20, labMax: 70, description: "Measures enzyme linked to bone and liver health", synonyms: ["alkaline phosphatase", "alp", "alk phos", "alkaline phos"] },
+  { cpt: "84132", name: "Potassium", medicareRate: 5.39, labMin: 15, labMax: 55, description: "Measures potassium level for heart and muscle function", synonyms: ["potassium", "potassium level", "serum potassium", "k+"] },
+  { cpt: "84153", name: "PSA (Prostate Specific Antigen)", medicareRate: 20.56, labMin: 65, labMax: 250, description: "Prostate cancer screening test for men", synonyms: ["psa", "prostate specific antigen", "prostate antigen", "prostate cancer screening"] },
+  { cpt: "84295", name: "Sodium", medicareRate: 5.39, labMin: 15, labMax: 55, description: "Measures sodium level for fluid and electrolyte balance", synonyms: ["sodium", "sodium level", "serum sodium", "na+"] },
+  { cpt: "84403", name: "Testosterone Total", medicareRate: 25.10, labMin: 80, labMax: 300, description: "Measures total testosterone hormone level", synonyms: ["testosterone total", "total testosterone", "testosterone", "testosterone level"] },
+  { cpt: "84439", name: "Thyroxine Free (Free T4)", medicareRate: 10.52, labMin: 35, labMax: 120, description: "Measures thyroid hormone free T4 level", synonyms: ["thyroxine free", "free t4", "free thyroxine", "ft4", "t4"] },
+  { cpt: "84443", name: "TSH (Thyroid Stimulating Hormone)", medicareRate: 16.41, labMin: 60, labMax: 220, description: "Measures thyroid-stimulating hormone for thyroid function", synonyms: ["tsh", "thyroid stimulating hormone", "thyroid", "thyroid test", "thyroid function"] },
+  { cpt: "84480", name: "T3 (Triiodothyronine)", medicareRate: 14.51, labMin: 50, labMax: 180, description: "Measures thyroid hormone T3 level", synonyms: ["t3", "triiodothyronine", "total t3", "free t3"] },
+  { cpt: "84484", name: "Troponin", medicareRate: 12.98, labMin: 40, labMax: 160, description: "Heart damage marker for heart attack diagnosis", synonyms: ["troponin", "cardiac troponin", "troponin i", "troponin t", "heart enzyme"] },
+  { cpt: "84550", name: "Uric Acid", medicareRate: 5.16, labMin: 15, labMax: 60, description: "Measures uric acid for gout and kidney function", synonyms: ["uric acid", "urate", "serum uric acid"] },
+  { cpt: "84702", name: "hCG (Pregnancy Test Quantitative)", medicareRate: 16.41, labMin: 50, labMax: 200, description: "Quantitative pregnancy test measuring human chorionic gonadotropin", synonyms: ["hcg", "pregnancy test", "quantitative hcg", "beta hcg", "human chorionic gonadotropin"] },
+
+  // Hematology
+  { cpt: "85025", name: "CBC with Differential", medicareRate: 7.47, labMin: 30, labMax: 124, description: "Complete blood count with white blood cell differential", synonyms: ["cbc with differential", "cbc with diff", "complete blood count", "cbc", "white blood cell count"] },
+  { cpt: "85027", name: "CBC without Differential", medicareRate: 5.84, labMin: 25, labMax: 100, description: "Complete blood count without cell differential", synonyms: ["cbc without differential", "cbc", "complete blood count"] },
+  { cpt: "85610", name: "Prothrombin Time (PT)", medicareRate: 5.39, labMin: 20, labMax: 75, description: "Measures blood clotting time, typically for warfarin monitoring", synonyms: ["prothrombin time", "pt", "inr"] },
+  { cpt: "85730", name: "PTT (Partial Thromboplastin Time)", medicareRate: 8.14, labMin: 25, labMax: 90, description: "Measures blood clotting time for heparin monitoring", synonyms: ["ptt", "partial thromboplastin time", "aptt", "activated ptt"] },
+  { cpt: "86140", name: "C-Reactive Protein (CRP)", medicareRate: 6.47, labMin: 20, labMax: 80, description: "Measures inflammation marker", synonyms: ["c-reactive protein", "crp", "high sensitivity crp", "hs-crp", "inflammation"] },
+  { cpt: "85652", name: "Sed Rate (ESR)", medicareRate: 4.27, labMin: 15, labMax: 55, description: "Measures erythrocyte sedimentation rate for inflammation", synonyms: ["sed rate", "esr", "erythrocyte sedimentation rate"] },
+  { cpt: "85049", name: "Platelet Count", medicareRate: 4.52, labMin: 15, labMax: 55, description: "Counts platelets for clotting ability", synonyms: ["platelet count", "platelets", "thrombocytes"] },
+
+  // Urinalysis
+  { cpt: "81001", name: "Urinalysis with Microscopy", medicareRate: 3.83, labMin: 15, labMax: 67, description: "Complete urinalysis with microscopic examination", synonyms: ["urinalysis with microscopy", "ua with micro", "urinalysis", "urine test"] },
+  { cpt: "81003", name: "Urinalysis without Microscopy", medicareRate: 2.79, labMin: 10, labMax: 50, description: "Urinalysis without microscopic examination", synonyms: ["urinalysis without microscopy", "ua", "urine test"] },
+
+  // Thyroid Panel
+  { cpt: "84436", name: "Thyroxine Total (T4)", medicareRate: 7.28, labMin: 25, labMax: 90, description: "Measures total thyroid hormone T4", synonyms: ["thyroxine total", "total t4", "t4", "thyroxine"] },
+  { cpt: "84479", name: "T3 Uptake", medicareRate: 7.28, labMin: 25, labMax: 85, description: "Measures thyroid hormone binding protein", synonyms: ["t3 uptake", "resin t3 uptake", "thyroid binding ratio"] },
+
+  // Diabetes
+  { cpt: "82962", name: "Glucose POC (fingerstick)", medicareRate: 3.44, labMin: 10, labMax: 40, description: "Point-of-care glucose test via fingerstick", synonyms: ["glucose poc", "glucose fingerstick", "point of care glucose", "capillary glucose"] },
+  { cpt: "83037", name: "Glycated Hemoglobin", medicareRate: 12.11, labMin: 40, labMax: 130, description: "Alternative code for A1c measuring average blood sugar", synonyms: ["glycated hemoglobin", "glycohemoglobin", "a1c variant"] },
+
+  // Infectious Disease / Immunology
+  { cpt: "86580", name: "TB Test (Tuberculin)", medicareRate: 6.47, labMin: 20, labMax: 70, description: "Tuberculosis screening test", synonyms: ["tb test", "tuberculin test", "mantoux test", "ppd", "tb screening"] },
+  { cpt: "86592", name: "Syphilis Test (RPR)", medicareRate: 5.01, labMin: 15, labMax: 55, description: "Tests for syphilis infection", synonyms: ["syphilis test", "rpr", "rpw", "vdrl", "treponemal test"] },
+  { cpt: "86703", name: "HIV-1/HIV-2 Antibody", medicareRate: 10.29, labMin: 35, labMax: 120, description: "Tests for HIV infection antibodies", synonyms: ["hiv antibody", "hiv test", "hiv 1/2", "hiv screening", "aids test"] },
+  { cpt: "86308", name: "Mono Test (Heterophile Antibody)", medicareRate: 7.01, labMin: 25, labMax: 80, description: "Tests for mononucleosis infection", synonyms: ["mono test", "heterophile antibody", "monospot", "epstein barr"] },
+  { cpt: "87081", name: "Culture, Bacterial", medicareRate: 8.06, labMin: 30, labMax: 110, description: "Bacterial culture from various specimens", synonyms: ["bacterial culture", "culture", "bacterial growth"] },
+  { cpt: "87086", name: "Urine Culture", medicareRate: 9.22, labMin: 35, labMax: 120, description: "Culture test for urinary tract infection bacteria", synonyms: ["urine culture", "uti culture", "culture urine"] },
+  { cpt: "87340", name: "Hepatitis B Surface Antigen", medicareRate: 8.86, labMin: 30, labMax: 100, description: "Tests for hepatitis B infection", synonyms: ["hepatitis b surface antigen", "hbsag", "hepatitis b", "hep b"] },
+  { cpt: "86706", name: "Hepatitis B Surface Antibody", medicareRate: 9.12, labMin: 30, labMax: 100, description: "Tests for hepatitis B immunity", synonyms: ["hepatitis b surface antibody", "hbsab", "anti-hbs", "hepatitis b immunity"] },
+  { cpt: "87390", name: "HIV-1 Antigen", medicareRate: 17.82, labMin: 55, labMax: 200, description: "Tests for HIV-1 antigen (p24 antigen test)", synonyms: ["hiv-1 antigen", "p24 antigen", "hiv antigen", "4th generation hiv test"] },
+
+  // Hormones / Endocrine
+  { cpt: "82670", name: "Estradiol (E2)", medicareRate: 22.47, labMin: 70, labMax: 250, description: "Measures estrogen hormone estradiol", synonyms: ["estradiol", "e2", "estrogen", "17-beta estradiol"] },
+  { cpt: "83001", name: "FSH (Follicle Stimulating Hormone)", medicareRate: 16.41, labMin: 55, labMax: 200, description: "Measures follicle stimulating hormone for reproductive health", synonyms: ["fsh", "follicle stimulating hormone", "fertility hormone"] },
+  { cpt: "83002", name: "LH (Luteinizing Hormone)", medicareRate: 16.41, labMin: 55, labMax: 200, description: "Measures luteinizing hormone for reproductive health", synonyms: ["lh", "luteinizing hormone", "luteinizing hormone test"] },
+  { cpt: "82681", name: "Estrone", medicareRate: 26.82, labMin: 80, labMax: 280, description: "Measures estrone hormone level", synonyms: ["estrone", "e1", "estrogen"] },
+  { cpt: "84402", name: "Testosterone Free", medicareRate: 18.63, labMin: 60, labMax: 220, description: "Measures free testosterone hormone level", synonyms: ["testosterone free", "free testosterone", "bioavailable testosterone"] },
+  { cpt: "82627", name: "DHEA-Sulfate", medicareRate: 22.98, labMin: 70, labMax: 250, description: "Measures DHEA-S hormone level", synonyms: ["dhea-sulfate", "dhea-s", "dheas", "dehydroepiandrosterone"] },
+  { cpt: "83003", name: "Growth Hormone", medicareRate: 16.41, labMin: 50, labMax: 200, description: "Measures growth hormone level", synonyms: ["growth hormone", "hgh", "somatotropin", "human growth hormone"] },
+  { cpt: "82533", name: "Cortisol", medicareRate: 16.41, labMin: 50, labMax: 180, description: "Measures cortisol stress hormone", synonyms: ["cortisol", "cortisol level", "stress hormone"] },
+  { cpt: "84146", name: "Prolactin", medicareRate: 18.34, labMin: 55, labMax: 200, description: "Measures prolactin hormone level", synonyms: ["prolactin", "prl", "lactogenic hormone"] },
+  { cpt: "82384", name: "Catecholamines", medicareRate: 18.63, labMin: 60, labMax: 220, description: "Measures catecholamine hormones (epinephrine, norepinephrine)", synonyms: ["catecholamines", "epinephrine", "norepinephrine", "adrenaline"] },
+
+  // Vitamins / Minerals
+  { cpt: "82310", name: "Calcium Total", medicareRate: 6.27, labMin: 15, labMax: 55, description: "Measures total calcium for bone and nerve health", synonyms: ["calcium total", "total calcium", "serum calcium", "calcium"] },
+  { cpt: "82330", name: "Calcium Ionized", medicareRate: 10.29, labMin: 35, labMax: 110, description: "Measures ionized calcium level", synonyms: ["calcium ionized", "ionized calcium", "free calcium"] },
+  { cpt: "84252", name: "Phosphorus", medicareRate: 5.39, labMin: 15, labMax: 55, description: "Measures phosphorus level for bone health", synonyms: ["phosphorus", "phosphate", "serum phosphorus"] },
+  { cpt: "84630", name: "Zinc", medicareRate: 8.14, labMin: 30, labMax: 95, description: "Measures zinc level for immune function", synonyms: ["zinc", "serum zinc", "zinc level"] },
+
+  // Cancer Markers
+  { cpt: "82378", name: "CEA (Carcinoembryonic Antigen)", medicareRate: 18.34, labMin: 60, labMax: 220, description: "Cancer marker for colon and other cancers", synonyms: ["cea", "carcinoembryonic antigen", "cancer marker"] },
+  { cpt: "86300", name: "CA-125 (Ovarian Cancer Marker)", medicareRate: 20.56, labMin: 65, labMax: 250, description: "Cancer marker for ovarian cancer screening", synonyms: ["ca-125", "ca125", "ovarian cancer marker"] },
+  { cpt: "86304", name: "CA 19-9 (Pancreatic Cancer Marker)", medicareRate: 20.56, labMin: 65, labMax: 250, description: "Cancer marker for pancreatic cancer screening", synonyms: ["ca 19-9", "ca19-9", "pancreatic cancer marker"] },
+  { cpt: "82105", name: "AFP (Alpha-Fetoprotein)", medicareRate: 16.96, labMin: 55, labMax: 200, description: "Cancer marker for liver and germ cell cancers", synonyms: ["afp", "alpha-fetoprotein", "liver cancer marker"] },
+
+  // Drug Monitoring
+  { cpt: "80185", name: "Phenytoin (Dilantin) Level", medicareRate: 14.28, labMin: 45, labMax: 160, description: "Measures phenytoin drug level for seizure medication monitoring", synonyms: ["phenytoin level", "dilantin level", "drug monitoring"] },
+  { cpt: "80198", name: "Theophylline Level", medicareRate: 11.76, labMin: 35, labMax: 130, description: "Measures theophylline drug level for asthma medication", synonyms: ["theophylline level", "drug monitoring"] },
+  { cpt: "80202", name: "Vancomycin Level", medicareRate: 14.28, labMin: 45, labMax: 160, description: "Measures vancomycin drug level for antibiotic monitoring", synonyms: ["vancomycin level", "antibiotic monitoring", "drug level"] },
+
+  // Coagulation
+  { cpt: "85379", name: "D-Dimer", medicareRate: 8.95, labMin: 30, labMax: 110, description: "Tests for blood clots using D-dimer protein levels", synonyms: ["d-dimer", "fibrin d-dimer", "blood clot test"] }
+];
+
+// Build searchable indices
+const searchIndex = {};
+labTestDatabase.forEach(test => {
+  // Index by CPT code
+  searchIndex[test.cpt.toLowerCase()] = test;
+  // Index by test name
+  searchIndex[test.name.toLowerCase()] = test;
+  // Index by synonyms
+  if (test.synonyms) {
+    test.synonyms.forEach(syn => {
+      searchIndex[syn.toLowerCase()] = test;
+    });
+  }
+});
+
+// Get DOM elements
+const inputs = document.querySelectorAll('.search-input');
+const dropdowns = document.querySelectorAll('.autocomplete-dropdown');
+const lookupBtn = document.getElementById('lookupBtn');
+const clearBtn = document.getElementById('clearBtn');
+const resultsSection = document.getElementById('resultsSection');
+const resultsGrid = document.getElementById('resultsGrid');
+const emptyState = document.getElementById('emptyState');
+
+// Track selected tests
+const selectedTests = [null, null, null, null];
+
+// Autocomplete search
+function performSearch(query) {
+  if (query.length < 2) return [];
+
+  const results = new Set();
+  const queryLower = query.toLowerCase();
+
+  labTestDatabase.forEach(test => {
+    // Search by CPT code
+    if (test.cpt.toLowerCase().includes(queryLower)) {
+      results.add(test.cpt);
+    }
+    // Search by test name
+    if (test.name.toLowerCase().includes(queryLower)) {
+      results.add(test.cpt);
+    }
+    // Search by synonyms
+    if (test.synonyms) {
+      test.synonyms.forEach(syn => {
+        if (syn.toLowerCase().includes(queryLower)) {
+          results.add(test.cpt);
+        }
+      });
+    }
+  });
+
+  return Array.from(results).map(cpt => labTestDatabase.find(t => t.cpt === cpt)).slice(0, 8);
+}
+
+// Display autocomplete dropdown
+function showAutocomplete(index, query) {
+  const dropdown = dropdowns[index];
+  const results = performSearch(query);
+
+  if (results.length === 0) {
+    dropdown.classList.remove('active');
+    return;
+  }
+
+  dropdown.innerHTML = results.map((test, i) => `
+    <div class="autocomplete-item" data-cpt="${test.cpt}" data-index="${index}">
+      <div class="autocomplete-item-name">${test.name}</div>
+      <div class="autocomplete-item-code">${test.cpt}</div>
+    </div>
+  `).join('');
+
+  dropdown.classList.add('active');
+
+  // Add click handlers
+  dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const cpt = item.getAttribute('data-cpt');
+      const inputIdx = parseInt(item.getAttribute('data-index'));
+      selectTest(inputIdx, cpt);
+    });
+  });
+}
+
+// Select a test
+function selectTest(index, cpt) {
+  const test = labTestDatabase.find(t => t.cpt === cpt);
+  if (!test) return;
+
+  selectedTests[index] = test;
+  inputs[index].value = test.name;
+  dropdowns[index].classList.remove('active');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-input-wrapper')) {
+    dropdowns.forEach(d => d.classList.remove('active'));
+  }
+});
+
+// Input event handlers
+inputs.forEach((input, index) => {
+  input.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    selectedTests[index] = null; // Clear selection when typing
+
+    if (query.length < 2) {
+      dropdowns[index].classList.remove('active');
+    } else {
+      showAutocomplete(index, query);
+    }
+  });
+
+  input.addEventListener('focus', (e) => {
+    const query = e.target.value.trim();
+    if (query.length >= 2) {
+      showAutocomplete(index, query);
+    }
+  });
+});
+
+// Lookup button
+lookupBtn.addEventListener('click', () => {
+  // Try to find tests from input text if not selected via autocomplete
+  const tests = selectedTests.map((selected, idx) => {
+    if (selected) return selected;
+
+    const query = inputs[idx].value.trim().toLowerCase();
+    if (!query) return null;
+
+    // Try exact CPT code match
+    const testByCpt = labTestDatabase.find(t => t.cpt === query);
+    if (testByCpt) return testByCpt;
+
+    // Try name/synonym search
+    for (const key in searchIndex) {
+      if (key === query) {
+        return searchIndex[key];
+      }
+    }
+
+    return null;
+  }).filter(t => t !== null);
+
+  if (tests.length === 0) {
+    emptyState.style.display = 'block';
+    resultsSection.style.display = 'none';
+    return;
+  }
+
+  displayResults(tests);
+});
+
+// Clear button
+clearBtn.addEventListener('click', () => {
+  inputs.forEach(input => {
+    input.value = '';
+    input.focus();
+  });
+  selectedTests.fill(null);
+  dropdowns.forEach(d => d.classList.remove('active'));
+  resultsSection.style.display = 'none';
+  emptyState.style.display = 'block';
+});
+
+// Display results
+function displayResults(tests) {
+  resultsGrid.innerHTML = tests.map(test => {
+    const minRange = test.labMin;
+    const maxRange = test.labMax;
+    const midRange = (minRange + maxRange) / 2;
+    const markupPercent = Math.round(((midRange - test.medicareRate) / test.medicareRate) * 100);
+
+    return `
+      <div class="result-card">
+        <div class="result-header">
+          <div class="result-title">
+            <div class="result-name">${test.name}</div>
+            <div class="result-cpt">CPT ${test.cpt}</div>
+            <div class="result-description">${test.description}</div>
+          </div>
+        </div>
+        <div class="result-rates">
+          <div class="rate-box">
+            <div class="rate-label">Medicare Reimbursement</div>
+            <p class="rate-value medicare">$${test.medicareRate.toFixed(2)}</p>
+          </div>
+          <div class="rate-box">
+            <div class="rate-label">Typical Lab Charges</div>
+            <p class="rate-value typical">$${minRange} – $${maxRange}</p>
+            <div class="rate-subtext">Typical range from various labs</div>
+          </div>
+          <div class="markup-box">
+            <div class="markup-label">Typical Markup Above Medicare</div>
+            <p class="markup-value">+${markupPercent}%</p>
+            <div class="rate-subtext">Based on midpoint of typical lab charges</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  emptyState.style.display = 'none';
+  resultsSection.style.display = 'block';
+  resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Allow Enter key to trigger search
+document.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && e.target.classList.contains('search-input')) {
+    lookupBtn.click();
+  }
+});
+  </script>
+
+</body>
+</html>
