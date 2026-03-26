@@ -29,6 +29,10 @@
       "dest": "/blog.html"
     },
     {
+      "src": "^/coverage$",
+      "dest": "/coverage/index.html"
+    },
+    {
       "src": "^/$",
       "dest": "/how-it-works.html"
     }
