@@ -446,6 +446,70 @@
       box-shadow: 0 4px 14px rgba(74, 144, 217, 0.4);
     }
 
+    /* ===== BETA BADGE ===== */
+    .beta-badge {
+      display: inline-block;
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
+      color: #e65100;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-top: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== MCP CROSS-PROMO ===== */
+    .mcp-section {
+      background: linear-gradient(135deg, #f0f7ff, #e8f4f8);
+      border: 1px solid #d0e3f0;
+      border-radius: 16px;
+      padding: 32px 28px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .mcp-section h2 {
+      font-size: 22px;
+      color: #1B3A5C;
+      margin-bottom: 14px;
+      font-weight: 800;
+    }
+    .mcp-section p {
+      font-size: 16px;
+      color: #495057;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .mcp-coming-soon {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0B5E8F;
+      background: #e3f2fd;
+      padding: 8px 18px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .mcp-coming-soon:hover {
+      background: #bbdefb;
+    }
+
+    /* ===== FOOTER ALSO-FROM ===== */
+    .footer-also {
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .footer-also a {
+      color: #FF6B6B;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .footer-also a:hover {
+      text-decoration: underline;
+    }
+
     /* ===== FOOTER ===== */
     .site-footer {
       background: #1B3A5C;
@@ -621,6 +685,7 @@
     <!-- Hero -->
     <div class="hero">
       <h1>Lab Tests Cost Way More Than They Should.<br>GougeStop Shows You the Truth.</h1>
+      <span class="beta-badge">Beta &#8212; Our photo extraction is improving daily. If results look off, try a clearer photo or enter your CPT codes manually.</span>
       <p>When you get blood work or other lab tests, most labs charge 3 to 5 times what Medicare says those tests are worth. A simple blood panel that Medicare values at $100? Your lab might bill you $500 or more. Most people never know — because nobody shows them the real numbers. GougeStop does.</p>
     </div>
 
@@ -768,6 +833,13 @@
       <a href="/blog" class="blog-link">Visit the Blog &rarr;</a>
     </div>
 
+    <!-- MedcarePrecheck Cross-Promo -->
+    <div class="mcp-section">
+      <h2>Address the Problem Before It Starts</h2>
+      <p>GougeStop helps you fight unfair lab bills. <strong>MedcarePrecheck</strong> helps prevent the bill from being a problem in the first place. MedcarePrecheck reads your lab order, checks every test against Medicare&#8217;s coverage rules, and warns you about likely denials to review with your doctor &#8212; before you ever walk into the lab.</p>
+      <a href="https://medcareprecheck.com" class="mcp-coming-soon" target="_blank" rel="noopener">Coming Soon &rarr; medcareprecheck.com</a>
+    </div>
+
     <!-- CTA -->
     <div class="cta-section">
       <h2>Ready to See What You're Really Paying?</h2>
@@ -788,6 +860,7 @@
       <a href="/app" style="color: #FF6B6B; font-weight: 600;">Open GougeStop</a>
     </div>
     <p>&copy; 2026 GougeStop. All rights reserved. For informational purposes only. Not medical or financial advice.</p>
+    <p class="footer-also">Also from GougeStop: <a href="https://medcareprecheck.com" target="_blank" rel="noopener">MedcarePrecheck</a> &#8212; Know if Medicare will cover your lab tests before you go.</p>
   </footer>
 
 </body>
