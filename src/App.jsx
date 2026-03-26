@@ -149,6 +149,8 @@ function App() {
         <nav className="header-nav">
           <a href="/blog" className="nav-link">Blog</a>
           <a href="/our-story" className="nav-link">Our Story</a>
+          <a href="/install" className="nav-link">Install on Phone</a>
+          <a href="/coverage" className="nav-link">Coverage Lookup</a>
           <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
         </nav>
         <AccessGate onAccessGranted={handleAccessGranted} />
@@ -170,6 +172,8 @@ function App() {
       <nav className="header-nav">
         <a href="/blog" className="nav-link">Blog</a>
         <a href="/our-story" className="nav-link">Our Story</a>
+        <a href="/install" className="nav-link">Install on Phone</a>
+        <a href="/coverage" className="nav-link">Coverage Lookup</a>
         <a href="/app" className="nav-link nav-cta">Open GougeStop</a>
       </nav>
 
